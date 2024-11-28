@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Link } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
@@ -52,18 +53,44 @@ const StatisticsScreen = () => {
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={[styles.title, { color: currentTheme.text }]}>{t.statistics}</Text>
-      {Array.from({ length: 12 }, (_, i) => i + 1).map(number => renderNumberStats(number))}
-    </ScrollView>
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <View style={styles.header}>
+        <Link href="/study" asChild>
+          <TouchableOpacity>
+            <Text style={[styles.backButton, { color: currentTheme.text }]}>
+              {t.backToStudy}
+            </Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
+
+      <ScrollView
+        style={[styles.scrollView, { backgroundColor: currentTheme.background }]}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={[styles.title, { color: currentTheme.text }]}>{t.statistics}</Text>
+        {Array.from({ length: 12 }, (_, i) => i + 1).map(number => renderNumberStats(number))}
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  backButton: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  scrollView: {
     flex: 1,
     padding: 16,
   },

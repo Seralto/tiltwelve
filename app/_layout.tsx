@@ -44,6 +44,13 @@ export default function RootLayout() {
                 headerShown: false,
               }}
             />
+            <Stack.Screen
+              name="statistics"
+              options={{
+                title: 'Statistics',
+                headerShown: false,
+              }}
+            />
           </Stack>
         </StatisticsProvider>
       </LanguageProvider>
