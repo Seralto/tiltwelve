@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Keyboard } from 'react-native';
 import { Link } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
@@ -71,12 +71,15 @@ const QuizScreen = () => {
             backgroundColor: currentTheme.card,
             color: currentTheme.text,
           }]}
-          keyboardType="number-pad"
           value={answer}
           onChangeText={setAnswer}
+          keyboardType="number-pad"
+          returnKeyType="done"
+          onSubmitEditing={checkAnswer}
           placeholder={t.enterAnswer}
           placeholderTextColor={currentTheme.secondary}
           maxLength={3}
+          autoFocus={true}
         />
         
         <TouchableOpacity 
