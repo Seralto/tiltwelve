@@ -7,20 +7,21 @@ import { useStatistics } from './context/StatisticsContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const QuizScreen = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(generateQuestion());
-  const [answer, setAnswer] = useState('');
-  const [score, setScore] = useState(0);
-  const [feedback, setFeedback] = useState('');
   const { theme } = useTheme();
   const { t } = useLanguage();
   const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
 
-  const generateQuestion = () => {
+  function generateQuestion() {
     const num1 = Math.floor(Math.random() * 12) + 1;
     const num2 = Math.floor(Math.random() * 12) + 1;
     return { num1, num2 };
-  };
+  }
+
+  const [currentQuestion, setCurrentQuestion] = useState(generateQuestion());
+  const [answer, setAnswer] = useState('');
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState('');
 
   useEffect(() => {
     setCurrentQuestion(generateQuestion());
