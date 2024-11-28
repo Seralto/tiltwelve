@@ -149,7 +149,9 @@ export default function MultipleChoiceQuizScreen() {
 
       <Link href="/study" asChild>
         <TouchableOpacity style={[styles.studyButton, { backgroundColor: currentTheme.secondary }]}>
-          <Text style={styles.studyButtonText}>{t.backToStudy}</Text>
+          <Text style={[styles.studyButtonText, { color: currentTheme.buttonText }]}>
+            {t.backToStudy}
+          </Text>
         </TouchableOpacity>
       </Link>
     </View>
@@ -255,7 +257,6 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
   },
   studyButtonText: {
-    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },

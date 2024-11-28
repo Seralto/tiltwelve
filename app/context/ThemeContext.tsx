@@ -21,6 +21,7 @@ export const themes = {
     primary: '#007AFF',
     secondary: '#666666',
     border: '#eeeeee',
+    buttonText: '#333333', // Updated for better visibility
   },
   dark: {
     background: '#1a1a1a',
@@ -29,6 +30,7 @@ export const themes = {
     primary: '#0A84FF',
     secondary: '#999999',
     border: '#404040',
+    buttonText: '#ffffff', // Updated for better visibility
   },
 };
 

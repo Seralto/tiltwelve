@@ -28,10 +28,10 @@ export default function QuizModeScreen() {
           onPress={() => router.push('/quiz')}
         >
           <View style={styles.modeIconContainer}>
-            <Ionicons name="keypad-outline" size={48} color={currentTheme.primary} />
+            <Ionicons name="keypad-outline" size={48} color={currentTheme.buttonText} />
           </View>
-          <Text style={[styles.modeTitle, { color: currentTheme.text }]}>{t.inputMode}</Text>
-          <Text style={[styles.modeDescription, { color: currentTheme.secondary }]}>
+          <Text style={[styles.modeTitle, { color: currentTheme.buttonText }]}>{t.inputMode}</Text>
+          <Text style={[styles.modeDescription, { color: currentTheme.buttonText }]}>
             {t.inputModeDesc}
           </Text>
         </TouchableOpacity>
@@ -41,18 +41,18 @@ export default function QuizModeScreen() {
           onPress={() => router.push('/quiz-multiple')}
         >
           <View style={styles.modeIconContainer}>
-            <Ionicons name="list-outline" size={48} color={currentTheme.primary} />
+            <Ionicons name="list-outline" size={48} color={currentTheme.buttonText} />
           </View>
-          <Text style={[styles.modeTitle, { color: currentTheme.text }]}>{t.multipleChoiceMode}</Text>
-          <Text style={[styles.modeDescription, { color: currentTheme.secondary }]}>
+          <Text style={[styles.modeTitle, { color: currentTheme.buttonText }]}>{t.multipleChoiceMode}</Text>
+          <Text style={[styles.modeDescription, { color: currentTheme.buttonText }]}>
             {t.multipleChoiceModeDesc}
           </Text>
         </TouchableOpacity>
       </View>
 
       <Link href="/study" asChild>
-        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.primary }]}>
-          <Text style={styles.backButtonText}>{t.backToStudy}</Text>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
+          <Text style={[styles.buttonText, { color: currentTheme.buttonText }]}>{t.backToStudy}</Text>
         </TouchableOpacity>
       </Link>
     </View>
@@ -113,6 +113,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 20,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   backButtonText: {
     color: '#fff',

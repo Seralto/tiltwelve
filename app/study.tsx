@@ -186,7 +186,9 @@ const StudyScreen = () => {
 
       <Link href="/quiz-mode" asChild>
         <TouchableOpacity style={[styles.quizButton, { backgroundColor: currentTheme.primary }]}>
-          <Text style={styles.quizButtonText}>{t.takeQuiz}</Text>
+          <Text style={[styles.quizButtonText, { color: currentTheme.buttonText }]}>
+            {t.takeQuiz}
+          </Text>
         </TouchableOpacity>
       </Link>
     </View>
@@ -284,7 +286,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   quizButtonText: {
-    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
