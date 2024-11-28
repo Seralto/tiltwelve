@@ -119,26 +119,29 @@ const StudyScreen = () => {
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <View style={styles.header}>
-        <Link href="/settings" asChild>
-          <TouchableOpacity style={styles.settingsButton}>
-            <Ionicons name="settings-outline" size={24} color={currentTheme.text} />
+        <Text style={[styles.title, { color: currentTheme.text }]}>{t.studyTitle}</Text>
+        <View style={styles.rightIcons}>
+          <TouchableOpacity 
+            onPress={toggleMasterHide}
+            style={styles.iconButton}
+          >
+            <Ionicons 
+              name={hideAnswers ? "eye-off-outline" : "eye-outline"} 
+              size={24} 
+              color={currentTheme.text} 
+            />
           </TouchableOpacity>
-        </Link>
-        <Link href="/statistics" asChild>
-          <TouchableOpacity style={styles.statisticsButton}>
-            <Ionicons name="stats-chart" size={24} color={currentTheme.text} />
-          </TouchableOpacity>
-        </Link>
-        <TouchableOpacity 
-          onPress={toggleMasterHide}
-          style={styles.hideButton}
-        >
-          <Ionicons 
-            name={hideAnswers ? "eye-off" : "eye"} 
-            size={24} 
-            color={currentTheme.text} 
-          />
-        </TouchableOpacity>
+          <Link href="/statistics" asChild>
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="stats-chart" size={24} color={currentTheme.text} />
+            </TouchableOpacity>
+          </Link>
+          <Link href="/settings" asChild>
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="settings-outline" size={24} color={currentTheme.text} />
+            </TouchableOpacity>
+          </Link>
+        </View>
       </View>
       
       <View style={styles.numberSelectorContainer}>
@@ -210,19 +213,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  rightIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     flex: 1,
   },
-  hideButton: {
-    padding: 10,
-    marginRight: 10,
-  },
-  settingsButton: {
-    padding: 10,
-  },
-  statisticsButton: {
+  iconButton: {
     padding: 10,
   },
   numberSelectorContainer: {
