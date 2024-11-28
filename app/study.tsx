@@ -1,32 +1,135 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const HIDE_ANSWERS_KEY = '@tiltwelve:hideAnswers';
 
 const StudyScreen = () => {
-  const [selectedNumber, setSelectedNumber] = useState(2);
-  const selectorNumbers = Array.from({ length: 11 }, (_, i) => i + 2); 
-  const tableNumbers = Array.from({ length: 10 }, (_, i) => i + 1); 
+  const [selectedNumber, setSelectedNumber] = useState(1);
+  const [hideAnswers, setHideAnswers] = useState(false);
+  const [hiddenAnswers, setHiddenAnswers] = useState<{[key: number]: boolean}>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const selectorNumbers = Array.from({ length: 12 }, (_, i) => i + 1); // 1 to 12
+  const firstRowNumbers = selectorNumbers.slice(0, 6); // 1 to 6
+  const secondRowNumbers = selectorNumbers.slice(6); // 7 to 12
+  const tableNumbers = Array.from({ length: 10 }, (_, i) => i + 1); // 1 to 10
   const { theme } = useTheme();
   const { t } = useLanguage();
   const currentTheme = themes[theme];
 
+  useEffect(() => {
+    loadPreferences();
+  }, []);
+
+  const loadPreferences = async () => {
+    try {
+      const storedHideAnswers = await AsyncStorage.getItem(HIDE_ANSWERS_KEY);
+      
+      if (storedHideAnswers !== null) {
+        setHideAnswers(storedHideAnswers === 'true');
+        if (storedHideAnswers === 'true') {
+          // If hide answers is enabled, initialize all answers as hidden
+          const allHidden = tableNumbers.reduce((acc, num) => {
+            acc[num] = true;
+            return acc;
+          }, {} as {[key: number]: boolean});
+          setHiddenAnswers(allHidden);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading preferences:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleMasterHide = async () => {
+    const newHideAnswers = !hideAnswers;
+    setHideAnswers(newHideAnswers);
+    
+    try {
+      await AsyncStorage.setItem(HIDE_ANSWERS_KEY, String(newHideAnswers));
+      
+      if (newHideAnswers) {
+        // When enabling hide feature, hide all answers
+        const allHidden = tableNumbers.reduce((acc, num) => {
+          acc[num] = true;
+          return acc;
+        }, {} as {[key: number]: boolean});
+        setHiddenAnswers(allHidden);
+      } else {
+        // When disabling hide feature, show all answers
+        setHiddenAnswers({});
+      }
+    } catch (error) {
+      console.error('Error saving preferences:', error);
+    }
+  };
+
+  const revealAnswer = (number: number) => {
+    if (!hideAnswers) return;
+    setHiddenAnswers(prev => ({
+      ...prev,
+      [number]: false
+    }));
+  };
+
   const renderMultiplicationTable = () => {
     return tableNumbers.map((number) => (
       <View key={number} style={[styles.tableRow, { borderBottomColor: currentTheme.border }]}>
-        <Text style={[styles.tableText, { color: currentTheme.text }]}>
-          {selectedNumber} × {number} = {selectedNumber * number}
-        </Text>
+        <View style={styles.equationContainer}>
+          <Text style={[styles.tableText, { color: currentTheme.text }]}>
+            {selectedNumber} × {number} =
+          </Text>
+          {hideAnswers ? (
+            hiddenAnswers[number] ? (
+              <TouchableOpacity 
+                onPress={() => revealAnswer(number)}
+                style={styles.answerContainer}
+              >
+                <Ionicons name="eye-off" size={24} color={currentTheme.text} />
+              </TouchableOpacity>
+            ) : (
+              <Text style={[styles.tableText, { color: currentTheme.text }]}>
+                {selectedNumber * number}
+              </Text>
+            )
+          ) : (
+            <Text style={[styles.tableText, { color: currentTheme.text }]}>
+              {selectedNumber * number}
+            </Text>
+          )}
+        </View>
       </View>
     ));
   };
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: currentTheme.text }]}>{t.studyTitle}</Text>
+        <TouchableOpacity 
+          onPress={toggleMasterHide}
+          style={styles.hideButton}
+        >
+          <Ionicons 
+            name={hideAnswers ? "eye-off" : "eye"} 
+            size={24} 
+            color={currentTheme.text} 
+          />
+        </TouchableOpacity>
         <Link href="/settings" asChild>
           <TouchableOpacity style={styles.settingsButton}>
             <Ionicons name="settings-outline" size={24} color={currentTheme.text} />
@@ -34,26 +137,48 @@ const StudyScreen = () => {
         </Link>
       </View>
       
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.numberSelector}>
-        {selectorNumbers.map((number) => (
-          <TouchableOpacity
-            key={number}
-            style={[
-              styles.numberButton,
-              { backgroundColor: currentTheme.card },
-              selectedNumber === number && { backgroundColor: currentTheme.primary },
-            ]}
-            onPress={() => setSelectedNumber(number)}
-          >
-            <Text style={[
-              styles.numberText,
-              { color: selectedNumber === number ? '#fff' : currentTheme.text },
-            ]}>
-              {number}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <View style={styles.numberSelectorContainer}>
+        <View style={styles.numberRow}>
+          {firstRowNumbers.map((number) => (
+            <TouchableOpacity
+              key={number}
+              style={[
+                styles.numberButton,
+                { backgroundColor: currentTheme.card },
+                selectedNumber === number && { backgroundColor: currentTheme.primary },
+              ]}
+              onPress={() => setSelectedNumber(number)}
+            >
+              <Text style={[
+                styles.numberText,
+                { color: selectedNumber === number ? '#fff' : currentTheme.text },
+              ]}>
+                {number}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.numberRow}>
+          {secondRowNumbers.map((number) => (
+            <TouchableOpacity
+              key={number}
+              style={[
+                styles.numberButton,
+                { backgroundColor: currentTheme.card },
+                selectedNumber === number && { backgroundColor: currentTheme.primary },
+              ]}
+              onPress={() => setSelectedNumber(number)}
+            >
+              <Text style={[
+                styles.numberText,
+                { color: selectedNumber === number ? '#fff' : currentTheme.text },
+              ]}>
+                {number}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
 
       <ScrollView style={[styles.tableContainer, { backgroundColor: currentTheme.card }]}>
         {renderMultiplicationTable()}
@@ -84,20 +209,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
   },
+  hideButton: {
+    padding: 10,
+    marginRight: 10,
+  },
   settingsButton: {
     padding: 10,
   },
-  numberSelector: {
-    flexGrow: 0,
+  numberSelectorContainer: {
     marginBottom: 20,
   },
+  numberRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
   numberButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 45,
+    height: 45,
+    borderRadius: 23,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 5,
+    marginHorizontal: 3,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -120,8 +253,30 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
   },
+  equationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingRight: 10,
+  },
+  answerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  answerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minWidth: 80,
+    justifyContent: 'flex-end',
+  },
   tableText: {
     fontSize: 20,
+    marginLeft: 10,
+  },
+  hiddenText: {
+    fontSize: 20,
+    marginLeft: 10,
+    letterSpacing: 3,
   },
   quizButton: {
     padding: 15,
