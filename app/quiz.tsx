@@ -28,10 +28,13 @@ const QuizScreen = () => {
   }, []);
 
   const checkAnswer = () => {
+    if (!answer) return; // Don't process empty answers
+    
     const userAnswer = parseInt(answer);
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
     const isCorrect = userAnswer === correctAnswer;
 
+    // Add attempt before updating UI
     addAttempt(currentQuestion.num1, currentQuestion.num2, isCorrect);
 
     if (isCorrect) {

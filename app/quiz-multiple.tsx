@@ -7,51 +7,41 @@ import { useStatistics } from './context/StatisticsContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function MultipleChoiceQuizScreen() {
-  const [currentQuestion, setCurrentQuestion] = useState({ num1: 0, num2: 0 });
+  const [currentQuestion, setCurrentQuestion] = useState(generateQuestion());
   const [options, setOptions] = useState<number[]>([]);
   const [score, setScore] = useState(0);
-  const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [buttonScales] = useState(Array(6).fill(new Animated.Value(1))); // Updated to 6 options
+  const [buttonScales] = useState(Array(6).fill(new Animated.Value(1))); 
   const { theme } = useTheme();
   const { t } = useLanguage();
   const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
 
-  const generateOptions = (correctAnswer: number) => {
-    const optionsSet = new Set<number>([correctAnswer]);
-    
-    while (optionsSet.size < 6) {
-      const randomNum1 = Math.floor(Math.random() * 12) + 1;
-      const randomNum2 = Math.floor(Math.random() * 12) + 1;
-      optionsSet.add(randomNum1 * randomNum2);
-    }
-
-    return shuffle(Array.from(optionsSet));
-  };
-
-  const shuffle = (array: number[]) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  };
-
-  const generateQuestion = () => {
+  function generateQuestion() {
     const num1 = Math.floor(Math.random() * 12) + 1;
     const num2 = Math.floor(Math.random() * 12) + 1;
-    const correctAnswer = num1 * num2;
-    const newOptions = generateOptions(correctAnswer);
-    
-    setCurrentQuestion({ num1, num2 });
-    setOptions(newOptions);
-    setFeedback('');
-  };
+    return { num1, num2 };
+  }
+
+  const generateOptions = useCallback((correctAnswer: number) => {
+    const options = new Set<number>();
+    options.add(correctAnswer);
+
+    while (options.size < 6) {
+      const wrong = Math.max(1, correctAnswer + (Math.floor(Math.random() * 21) - 10));
+      if (wrong !== correctAnswer) {
+        options.add(wrong);
+      }
+    }
+
+    return Array.from(options).sort((a, b) => a - b);
+  }, []);
 
   useEffect(() => {
-    generateQuestion();
+    const question = generateQuestion();
+    setCurrentQuestion(question);
+    setOptions(generateOptions(question.num1 * question.num2));
   }, []);
 
   const animateButton = useCallback((index: number, isCorrect: boolean) => {
@@ -70,27 +60,33 @@ export default function MultipleChoiceQuizScreen() {
         if (isCorrect) {
           setScore(score + 1);
         }
-        setQuestionsAnswered(questionsAnswered + 1);
-        generateQuestion();
-      }, 500);
+        setFeedback('');
+        setSelectedAnswer(null);
+        const newQuestion = generateQuestion();
+        setCurrentQuestion(newQuestion);
+        setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
+      }, 1500);
     });
-  }, [buttonScales, score, questionsAnswered]);
+  }, [buttonScales, score]);
 
-  const handleAnswer = useCallback((selectedAnswer: number, index: number) => {
+  const handleAnswer = useCallback((answer: number, index: number) => {
+    if (selectedAnswer !== null) return; // Prevent multiple answers
+    
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
-    const isCorrect = selectedAnswer === correctAnswer;
+    const isCorrect = answer === correctAnswer;
+    setSelectedAnswer(answer);
 
+    // Add attempt before updating UI
     addAttempt(currentQuestion.num1, currentQuestion.num2, isCorrect);
 
     if (isCorrect) {
-      setScore(score + 1);
       setFeedback(t.correct);
     } else {
       setFeedback(`${t.incorrect} ${correctAnswer}`);
     }
 
     animateButton(index, isCorrect);
-  }, [currentQuestion, animateButton, t, addAttempt, score]);
+  }, [currentQuestion, addAttempt, t, selectedAnswer, animateButton]);
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
@@ -105,7 +101,7 @@ export default function MultipleChoiceQuizScreen() {
       
       <View style={styles.scoreContainer}>
         <Text style={[styles.scoreText, { color: currentTheme.secondary }]}>
-          {t.score}: {score}/{questionsAnswered}
+          {t.score}: {score}
         </Text>
       </View>
 

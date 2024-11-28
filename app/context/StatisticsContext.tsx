@@ -9,10 +9,7 @@ interface EquationStat {
 }
 
 interface NumberStats {
-  [key: string]: { // key is in format "1x1", "1x2", etc.
-    correct: number;
-    total: number;
-  };
+  [key: string]: EquationStat; // key is in format "1x1", "1x2", etc.
 }
 
 interface Statistics {
@@ -29,7 +26,9 @@ const StatisticsContext = createContext<StatisticsContextType | undefined>(undef
 
 export function StatisticsProvider({ children }: { children: React.ReactNode }) {
   const [statistics, setStatistics] = useState<Statistics>({});
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Load statistics when component mounts
   useEffect(() => {
     loadStatistics();
   }, []);
@@ -40,8 +39,10 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
       if (stored) {
         setStatistics(JSON.parse(stored));
       }
+      setIsLoading(false);
     } catch (error) {
       console.error('Error loading statistics:', error);
+      setIsLoading(false);
     }
   };
 
@@ -53,21 +54,30 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
     }
   };
 
-  const addAttempt = (num1: number, num2: number, isCorrect: boolean) => {
+  const addAttempt = async (num1: number, num2: number, isCorrect: boolean) => {
     setStatistics(prev => {
-      const newStats = { ...prev };
+      // Create a deep copy of the previous state
+      const newStats = JSON.parse(JSON.stringify(prev));
+      
+      // Initialize objects if they don't exist
       if (!newStats[num1]) {
         newStats[num1] = {};
       }
+      
       const key = `${num1}x${num2}`;
       if (!newStats[num1][key]) {
         newStats[num1][key] = { correct: 0, total: 0 };
       }
-      newStats[num1][key].total++;
+      
+      // Update statistics
+      newStats[num1][key].total += 1;
       if (isCorrect) {
-        newStats[num1][key].correct++;
+        newStats[num1][key].correct += 1;
       }
+      
+      // Save to AsyncStorage
       saveStatistics(newStats);
+      
       return newStats;
     });
   };
@@ -75,8 +85,12 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
   const getPercentage = (num1: number, num2: number): number => {
     const stats = statistics[num1]?.[`${num1}x${num2}`];
     if (!stats || stats.total === 0) return 0;
-    return (stats.correct / stats.total) * 100;
+    return Math.round((stats.correct / stats.total) * 100);
   };
+
+  if (isLoading) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <StatisticsContext.Provider value={{ statistics, addAttempt, getPercentage }}>
