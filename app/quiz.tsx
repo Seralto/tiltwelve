@@ -3,43 +3,48 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Keyboard } from 'r
 import { Link } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
+import { useStatistics } from './context/StatisticsContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const QuizScreen = () => {
-  const [currentQuestion, setCurrentQuestion] = useState({ num1: 0, num2: 0 });
+  const [currentQuestion, setCurrentQuestion] = useState(generateQuestion());
   const [answer, setAnswer] = useState('');
   const [score, setScore] = useState(0);
-  const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [feedback, setFeedback] = useState('');
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
 
   const generateQuestion = () => {
     const num1 = Math.floor(Math.random() * 12) + 1;
     const num2 = Math.floor(Math.random() * 12) + 1;
-    setCurrentQuestion({ num1, num2 });
-    setAnswer('');
-    setFeedback('');
+    return { num1, num2 };
   };
 
   useEffect(() => {
-    generateQuestion();
+    setCurrentQuestion(generateQuestion());
   }, []);
 
   const checkAnswer = () => {
     const userAnswer = parseInt(answer);
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
+    const isCorrect = userAnswer === correctAnswer;
 
-    if (userAnswer === correctAnswer) {
+    addAttempt(currentQuestion.num1, currentQuestion.num2, isCorrect);
+
+    if (isCorrect) {
       setScore(score + 1);
       setFeedback(t.correct);
     } else {
       setFeedback(`${t.incorrect} ${correctAnswer}`);
     }
 
-    setQuestionsAnswered(questionsAnswered + 1);
-    setTimeout(generateQuestion, 1500);
+    setTimeout(() => {
+      setAnswer('');
+      setFeedback('');
+      setCurrentQuestion(generateQuestion());
+    }, 1500);
   };
 
   return (
@@ -55,7 +60,7 @@ const QuizScreen = () => {
       
       <View style={styles.scoreContainer}>
         <Text style={[styles.scoreText, { color: currentTheme.secondary }]}>
-          {t.score}: {score}/{questionsAnswered}
+          {t.score}: {score}
         </Text>
       </View>
 

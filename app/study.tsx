@@ -119,7 +119,16 @@ const StudyScreen = () => {
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: currentTheme.text }]}>{t.studyTitle}</Text>
+        <Link href="/settings" asChild>
+          <TouchableOpacity style={styles.settingsButton}>
+            <Ionicons name="settings-outline" size={24} color={currentTheme.text} />
+          </TouchableOpacity>
+        </Link>
+        <Link href="/statistics" asChild>
+          <TouchableOpacity style={styles.statisticsButton}>
+            <Ionicons name="stats-chart" size={24} color={currentTheme.text} />
+          </TouchableOpacity>
+        </Link>
         <TouchableOpacity 
           onPress={toggleMasterHide}
           style={styles.hideButton}
@@ -130,11 +139,6 @@ const StudyScreen = () => {
             color={currentTheme.text} 
           />
         </TouchableOpacity>
-        <Link href="/settings" asChild>
-          <TouchableOpacity style={styles.settingsButton}>
-            <Ionicons name="settings-outline" size={24} color={currentTheme.text} />
-          </TouchableOpacity>
-        </Link>
       </View>
       
       <View style={styles.numberSelectorContainer}>
@@ -216,6 +220,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   settingsButton: {
+    padding: 10,
+  },
+  statisticsButton: {
     padding: 10,
   },
   numberSelectorContainer: {

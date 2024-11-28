@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native
 import { Link } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
+import { useStatistics } from './context/StatisticsContext';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function MultipleChoiceQuizScreen() {
@@ -11,9 +12,11 @@ export default function MultipleChoiceQuizScreen() {
   const [score, setScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [feedback, setFeedback] = useState('');
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [buttonScales] = useState(Array(6).fill(new Animated.Value(1))); // Updated to 6 options
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
 
   const generateOptions = (correctAnswer: number) => {
@@ -77,14 +80,17 @@ export default function MultipleChoiceQuizScreen() {
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
     const isCorrect = selectedAnswer === correctAnswer;
 
+    addAttempt(currentQuestion.num1, currentQuestion.num2, isCorrect);
+
     if (isCorrect) {
+      setScore(score + 1);
       setFeedback(t.correct);
     } else {
       setFeedback(`${t.incorrect} ${correctAnswer}`);
     }
 
     animateButton(index, isCorrect);
-  }, [currentQuestion, animateButton, t]);
+  }, [currentQuestion, animateButton, t, addAttempt, score]);
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>

@@ -15,8 +15,8 @@ const LANGUAGE_STORAGE_KEY = '@tiltwelve:language';
 
 export const translations = {
   'en-US': {
-    studyTitle: 'Study Multiplication Tables',
-    quizTitle: 'Multiplication Quiz',
+    studyTitle: 'Multiplication Tables',
+    quizTitle: 'Quiz',
     settings: 'Settings',
     darkMode: 'Dark Mode',
     language: 'Language',
@@ -37,10 +37,13 @@ export const translations = {
     multipleChoiceModeDesc: 'Select from options',
     nextQuestion: 'Next Question',
     chooseAnswer: 'Choose the correct answer',
+    statistics: 'Statistics',
+    table: 'Table',
+    noAttempts: 'No attempts',
   },
   'pt-BR': {
-    studyTitle: 'Estude a Tabuada',
-    quizTitle: 'Quiz de Multiplicação',
+    studyTitle: 'Tabuadas',
+    quizTitle: 'Quiz',
     settings: 'Configurações',
     darkMode: 'Modo Escuro',
     language: 'Idioma',
@@ -61,10 +64,13 @@ export const translations = {
     multipleChoiceModeDesc: 'Selecione entre as opções',
     nextQuestion: 'Próxima Questão',
     chooseAnswer: 'Escolha a resposta correta',
+    statistics: 'Estatísticas',
+    table: 'Tabuada',
+    noAttempts: 'Sem tentativas',
   },
   'es-ES': {
-    studyTitle: 'Estudia las Tablas de Multiplicar',
-    quizTitle: 'Prueba de Multiplicación',
+    studyTitle: 'Tablas de Multiplicar',
+    quizTitle: 'Quiz',
     settings: 'Configuración',
     darkMode: 'Modo Oscuro',
     language: 'Idioma',
@@ -85,6 +91,9 @@ export const translations = {
     multipleChoiceModeDesc: 'Selecciona entre opciones',
     nextQuestion: 'Siguiente Pregunta',
     chooseAnswer: 'Elige la respuesta correcta',
+    statistics: 'Estadísticas',
+    table: 'Tabla',
+    noAttempts: 'Sin intentos',
   },
 };
 
