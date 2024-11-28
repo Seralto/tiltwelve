@@ -1,50 +1,92 @@
-# Welcome to your Expo app 👋
+# 🔢 TilTwelve
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A beautiful and interactive multiplication tables learning app that makes math fun! Available in English, Portuguese, and Spanish.
 
-## Get started
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-green.svg)
+![React Native](https://img.shields.io/badge/React%20Native-v0.72-blue.svg)
+![Expo](https://img.shields.io/badge/Expo-SDK%2049-black.svg)
 
-1. Install dependencies
+## ✨ Features
 
+- 📚 Study Mode
+  - Interactive multiplication tables from 1 to 12
+  - Toggle answer visibility for self-testing
+  - Clean, modern interface
+
+- 🎯 Quiz Modes
+  - Input Mode: Type your answers
+  - Multiple Choice: Choose from options
+  - Immediate feedback and scoring
+
+- 📊 Statistics
+  - Track your progress
+  - Performance metrics per table
+  - Color-coded success rates
+
+- 🌍 Multilingual
+  - English (US)
+  - Portuguese (BR)
+  - Spanish (ES)
+
+- 🎨 Themes
+  - Light mode
+  - Dark mode
+  - Persistent preferences
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or newer)
+- npm or yarn
+- Expo Go app (for mobile testing)
+
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/tiltwelve.git
+   cd tiltwelve
+   ```
+
+2. Install dependencies
    ```bash
    npm install
+   # or
+   yarn install
    ```
 
-2. Start the app
-
+3. Start the development server
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+4. Scan the QR code with Expo Go (Android) or Camera app (iOS)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🛠 Tech Stack
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- AsyncStorage
+- React Context API
 
-## Get a fresh project
+## 📱 Screenshots
 
-When you're ready, run:
+[Add your app screenshots here]
 
-```bash
-npm run reset-project
-```
+## 📝 License
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Learn more
+## 🙏 Acknowledgments
 
-To learn more about developing your project with Expo, look at the following resources:
+- Icons by [Ionicons](https://ionic.io/ionicons)
+- Built with [Expo](https://expo.dev)
+- Inspired by educators and students worldwide
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Made with ❤️ for making multiplication fun!
