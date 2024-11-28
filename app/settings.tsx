@@ -54,10 +54,8 @@ export default function SettingsScreen() {
       </ScrollView>
 
       <Link href="/study" asChild>
-        <TouchableOpacity 
-          style={[styles.backButton, { backgroundColor: currentTheme.primary }]}
-        >
-          <Text style={styles.backButtonText}>{t.backToStudy}</Text>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
+          <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>{t.backToStudy}</Text>
         </TouchableOpacity>
       </Link>
     </View>
@@ -107,7 +105,6 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
   },
   backButtonText: {
-    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
