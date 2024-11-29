@@ -151,10 +151,20 @@ const StudyScreen = () => {
               key={number}
               style={[
                 styles.numberButton,
-                { backgroundColor: currentTheme.card },
                 selectedNumber === number && { backgroundColor: currentTheme.primary },
+                { borderColor: currentTheme.primary }
               ]}
-              onPress={() => setSelectedNumber(number)}
+              onPress={() => {
+                setSelectedNumber(number);
+                if (hideAnswers) {
+                  // Reset all answers to hidden when changing table
+                  const allHidden = tableNumbers.reduce((acc, num) => {
+                    acc[num] = true;
+                    return acc;
+                  }, {} as {[key: number]: boolean});
+                  setHiddenAnswers(allHidden);
+                }
+              }}
             >
               <Text style={[
                 styles.numberText,
@@ -171,10 +181,20 @@ const StudyScreen = () => {
               key={number}
               style={[
                 styles.numberButton,
-                { backgroundColor: currentTheme.card },
                 selectedNumber === number && { backgroundColor: currentTheme.primary },
+                { borderColor: currentTheme.primary }
               ]}
-              onPress={() => setSelectedNumber(number)}
+              onPress={() => {
+                setSelectedNumber(number);
+                if (hideAnswers) {
+                  // Reset all answers to hidden when changing table
+                  const allHidden = tableNumbers.reduce((acc, num) => {
+                    acc[num] = true;
+                    return acc;
+                  }, {} as {[key: number]: boolean});
+                  setHiddenAnswers(allHidden);
+                }
+              }}
             >
               <Text style={[
                 styles.numberText,
