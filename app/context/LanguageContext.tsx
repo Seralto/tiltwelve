@@ -39,6 +39,7 @@ export const translations = {
     chooseAnswer: 'Choose the correct answer',
     statistics: 'Statistics',
     table: 'Table',
+    allTables: 'All',
     noAttempts: 'No attempts',
   },
   'pt-BR': {
@@ -66,6 +67,7 @@ export const translations = {
     chooseAnswer: 'Escolha a resposta correta',
     statistics: 'Estatísticas',
     table: 'Tabuada',
+    allTables: 'Todas',
     noAttempts: 'Sem tentativas',
   },
   'es-ES': {
@@ -93,6 +95,7 @@ export const translations = {
     chooseAnswer: 'Elige la respuesta correcta',
     statistics: 'Estadísticas',
     table: 'Tabla',
+    allTables: 'Todas',
     noAttempts: 'Sin intentos',
   },
 };

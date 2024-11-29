@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Keyboard } from 'react-native';
-import { Link } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Keyboard, ScrollView } from 'react-native';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
@@ -10,11 +10,14 @@ const QuizScreen = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
   const { addAttempt } = useStatistics();
+  const params = useLocalSearchParams();
+  const router = useRouter();
+  const selectedTable = params.table ? parseInt(params.table as string) : null;
   const currentTheme = themes[theme];
 
   function generateQuestion() {
-    const num1 = Math.floor(Math.random() * 12) + 1;
-    const num2 = Math.floor(Math.random() * 12) + 1;
+    const num1 = selectedTable || Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
     return { num1, num2 };
   }
 
@@ -25,7 +28,7 @@ const QuizScreen = () => {
 
   useEffect(() => {
     setCurrentQuestion(generateQuestion());
-  }, []);
+  }, [selectedTable]);
 
   const checkAnswer = () => {
     if (!answer) return; // Don't process empty answers
@@ -51,17 +54,72 @@ const QuizScreen = () => {
     }, 1500);
   };
 
+  const renderTableSelection = () => {
+    return (
+      <View style={styles.tableSelector}>
+        <TouchableOpacity 
+          style={[
+            styles.allTablesButton, 
+            !selectedTable && styles.selectedAllTables,
+            { borderColor: currentTheme.primary }
+          ]}
+          onPress={() => {
+            router.replace('/quiz');
+          }}
+        >
+          <Text style={[
+            styles.allTablesText, 
+            { color: currentTheme.text },
+            !selectedTable && { color: currentTheme.primary }
+          ]}>
+            {t.allTables}
+          </Text>
+        </TouchableOpacity>
+        <View style={styles.numbersContainer}>
+          {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
+            <TouchableOpacity
+              key={num}
+              style={[
+                styles.numberButton,
+                selectedTable === num && { backgroundColor: currentTheme.primary },
+              ]}
+              onPress={() => {
+                router.replace({
+                  pathname: '/quiz',
+                  params: { table: num }
+                });
+              }}
+            >
+              <Text 
+                style={[
+                  styles.numberText, 
+                  { color: currentTheme.text },
+                  selectedTable === num && { color: currentTheme.background }
+                ]}
+              >
+                {num}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: currentTheme.text }]}>{t.quizTitle}</Text>
-        <Link href="/settings" asChild>
-          <TouchableOpacity style={styles.settingsButton}>
-            <Ionicons name="settings-outline" size={24} color={currentTheme.text} />
+        <Link href="/study" asChild>
+          <TouchableOpacity>
+            <Text style={[styles.backButton, { color: currentTheme.text }]}>
+              {t.backToStudy}
+            </Text>
           </TouchableOpacity>
         </Link>
       </View>
-      
+
+      {renderTableSelection()}
+
       <View style={styles.scoreContainer}>
         <Text style={[styles.scoreText, { color: currentTheme.secondary }]}>
           {t.score}: {score}
@@ -135,13 +193,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    flex: 1,
-  },
-  settingsButton: {
-    padding: 10,
+  backButton: {
+    fontSize: 18,
   },
   scoreContainer: {
     alignItems: 'center',
@@ -212,6 +265,41 @@ const styles = StyleSheet.create({
   },
   studyButtonText: {
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  tableSelector: {
+    marginBottom: 20,
+    paddingHorizontal: 8,
+  },
+  allTablesButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 2,
+    alignSelf: 'center',
+    marginBottom: 8,
+  },
+  selectedAllTables: {
+    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+  },
+  allTablesText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  numbersContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  numberButton: {
+    paddingVertical: 6,
+    width: '18%',
+    alignItems: 'center',
+    marginVertical: 2,
+    borderRadius: 6,
+  },
+  numberText: {
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
