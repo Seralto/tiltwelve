@@ -30,10 +30,10 @@ export default function MultipleChoiceQuizScreen() {
     if (selectedTable) {
       num1 = selectedTable;
     } else {
-      // When no table is selected (All), use random number from 1-10
-      num1 = Math.floor(Math.random() * 10) + 1;
+      // When no table is selected (All), use random number from 1-12
+      num1 = Math.floor(Math.random() * 12) + 1;
     }
-    const num2 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 12) + 1;
     return { num1, num2 };
   }
 
@@ -136,7 +136,7 @@ export default function MultipleChoiceQuizScreen() {
           </Text>
         </TouchableOpacity>
         <View style={styles.numbersContainer}>
-          {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
+          {Array.from({ length: 12 }, (_, i) => i + 1).map(num => (
             <TouchableOpacity
               key={num}
               style={[
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   },
   numberButton: {
     paddingVertical: 6,
-    width: '18%',
+    width: '16%',
     alignItems: 'center',
     marginVertical: 2,
     borderRadius: 6,
