@@ -1,12 +1,12 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoadingScreen from '../components/LoadingScreen';
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'kids';
 
 interface ThemeContextType {
   theme: Theme;
-  toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -15,23 +15,38 @@ const THEME_STORAGE_KEY = '@tiltwelve:theme';
 
 export const themes = {
   light: {
+    primary: '#007AFF',
     background: '#f5f5f5',
     card: '#ffffff',
     text: '#333333',
-    primary: '#007AFF',
     secondary: '#666666',
     border: '#eeeeee',
-    buttonText: '#333333', // Updated for better visibility
+    buttonText: '#333333', 
+    error: '#FF3B30',
+    success: '#34C759',
   },
   dark: {
+    primary: '#0A84FF',
     background: '#1a1a1a',
     card: '#2a2a2a',
     text: '#ffffff',
-    primary: '#0A84FF',
     secondary: '#999999',
     border: '#404040',
-    buttonText: '#ffffff', // Updated for better visibility
+    buttonText: '#ffffff', 
+    error: '#FF453A',
+    success: '#32D74B',
   },
+  kids: {
+    primary: '#FF6B6B',
+    background: '#FFF9C4',
+    card: '#FFF9C4',
+    text: '#4A4A4A',
+    secondary: '#FFC107',
+    border: '#FFD700',
+    buttonText: '#4A4A4A', 
+    error: '#FF8A80',
+    success: '#A5D6A7',
+  }
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
@@ -45,7 +60,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const loadTheme = async () => {
     try {
       const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-      if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'kids')) {
         setTheme(savedTheme as Theme);
       }
     } catch (error) {
@@ -55,8 +70,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const toggleTheme = async () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
+  const handleSetTheme = async (newTheme: Theme) => {
     setTheme(newTheme);
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
@@ -70,7 +84,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme }}>
       {children}
     </ThemeContext.Provider>
   );

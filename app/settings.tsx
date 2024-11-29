@@ -1,57 +1,100 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
-import { useTheme, themes } from './context/ThemeContext';
-import { useLanguage, Language } from './context/LanguageContext';
+import { useTheme, themes, Theme } from './context/ThemeContext';
+import { useLanguage } from './context/LanguageContext';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SettingsScreen() {
-  const { theme, toggleTheme } = useTheme();
-  const { language, setLanguage, t } = useLanguage();
+  const { theme, setTheme } = useTheme();
+  const { t, setLanguage, language } = useLanguage();
   const currentTheme = themes[theme];
 
-  const languages: { code: Language; name: keyof typeof t }[] = [
-    { code: 'en-US', name: 'english' },
-    { code: 'pt-BR', name: 'portuguese' },
-    { code: 'es-ES', name: 'spanish' },
+  const themeOptions: { value: Theme; label: string; icon: any }[] = [
+    { value: 'light', label: 'Light', icon: 'sunny-outline' },
+    { value: 'dark', label: 'Dark', icon: 'moon-outline' },
+    { value: 'kids', label: 'Kids', icon: 'game-controller-outline' },
+  ];
+
+  const languageOptions = [
+    { value: 'en-US', label: 'English' },
+    { value: 'pt-BR', label: 'Português' },
+    { value: 'es-ES', label: 'Español' },
   ];
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
-      <Text style={[styles.title, { color: currentTheme.text }]}>{t.settings}</Text>
-
-      <ScrollView>
-        <View style={[styles.section, { backgroundColor: currentTheme.card }]}>
-          <View style={[styles.settingItem, { borderBottomColor: currentTheme.border }]}>
-            <Text style={[styles.settingText, { color: currentTheme.text }]}>{t.darkMode}</Text>
-            <Switch
-              value={theme === 'dark'}
-              onValueChange={toggleTheme}
-              trackColor={{ false: '#767577', true: currentTheme.primary }}
-            />
-          </View>
-        </View>
-
-        <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>{t.language}</Text>
-        <View style={[styles.section, { backgroundColor: currentTheme.card }]}>
-          {languages.map((lang, index) => (
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>
+          {t.theme}
+        </Text>
+        <View style={styles.themeContainer}>
+          {themeOptions.map((option) => (
             <TouchableOpacity
-              key={lang.code}
+              key={option.value}
               style={[
-                styles.settingItem,
-                index !== languages.length - 1 && { borderBottomColor: currentTheme.border, borderBottomWidth: 1 },
+                styles.themeOption,
+                theme === option.value && { 
+                  backgroundColor: currentTheme.primary,
+                  borderColor: currentTheme.primary,
+                },
+                { borderColor: currentTheme.text }
               ]}
-              onPress={() => setLanguage(lang.code)}
+              onPress={() => setTheme(option.value)}
             >
-              <Text style={[styles.settingText, { color: currentTheme.text }]}>
-                {t[lang.name]}
+              <Ionicons
+                name={option.icon}
+                size={24}
+                color={theme === option.value ? currentTheme.background : currentTheme.text}
+              />
+              <Text
+                style={[
+                  styles.themeText,
+                  { color: theme === option.value ? currentTheme.background : currentTheme.text }
+                ]}
+              >
+                {option.label}
               </Text>
-              {language === lang.code && (
-                <View style={[styles.selectedLanguage, { backgroundColor: currentTheme.primary }]} />
-              )}
             </TouchableOpacity>
           ))}
         </View>
-      </ScrollView>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>
+          {t.language}
+        </Text>
+        <View style={styles.languageContainer}>
+          {languageOptions.map((option) => (
+            <TouchableOpacity
+              key={option.value}
+              style={[
+                styles.languageOption,
+                language === option.value && {
+                  backgroundColor: currentTheme.primary,
+                  borderColor: currentTheme.primary,
+                },
+                { borderColor: currentTheme.text }
+              ]}
+              onPress={() => setLanguage(option.value)}
+            >
+              <Text
+                style={[
+                  styles.languageText,
+                  {
+                    color:
+                      language === option.value
+                        ? currentTheme.background
+                        : currentTheme.text,
+                  },
+                ]}
+              >
+                {option.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
 
       <Link href="/study" asChild>
         <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
@@ -67,36 +110,48 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
   section: {
-    borderRadius: 10,
-    marginBottom: 20,
-    overflow: 'hidden',
+    marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    marginLeft: 4,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
-  settingItem: {
+  themeContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  themeOption: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 2,
+    marginHorizontal: 4,
+    gap: 8,
   },
-  settingText: {
-    fontSize: 18,
+  themeText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
-  selectedLanguage: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+  languageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  languageOption: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 2,
+    marginHorizontal: 4,
+  },
+  languageText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
   backButton: {
     padding: 15,

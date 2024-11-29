@@ -41,6 +41,7 @@ export const translations = {
     table: 'Table',
     allTables: 'All',
     noAttempts: 'No attempts',
+    theme: 'Theme',
   },
   'pt-BR': {
     studyTitle: 'Tabuadas',
@@ -69,6 +70,7 @@ export const translations = {
     table: 'Tabuada',
     allTables: 'Todas',
     noAttempts: 'Sem tentativas',
+    theme: 'Tema',
   },
   'es-ES': {
     studyTitle: 'Tablas de Multiplicar',
@@ -97,6 +99,7 @@ export const translations = {
     table: 'Tabla',
     allTables: 'Todas',
     noAttempts: 'Sin intentos',
+    theme: 'Tema',
   },
 };
 
