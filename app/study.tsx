@@ -111,7 +111,7 @@ const StudyScreen = () => {
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
-        <Text>Loading...</Text>
+        <Text style={{ color: currentTheme.text }}>{t.loading}</Text>
       </View>
     );
   }
