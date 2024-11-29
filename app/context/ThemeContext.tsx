@@ -37,15 +37,15 @@ export const themes = {
     success: '#32D74B',
   },
   kids: {
-    primary: '#FF6B6B',
-    background: '#FFF9C4',
-    card: '#FFF9C4',
-    text: '#4A4A4A',
-    secondary: '#FFC107',
-    border: '#FFD700',
-    buttonText: '#4A4A4A', 
-    error: '#FF8A80',
-    success: '#A5D6A7',
+    primary: '#CB8CFF',
+    background: '#E2F0CB',
+    card: '#FFFFFF',
+    text: '#6B5876',
+    secondary: '#CB8CFF',
+    border: '#C7CEEA',
+    buttonText: '#6B5876',
+    error: '#FFB7B2',
+    success: '#B5EAD7',
   }
 };
 
