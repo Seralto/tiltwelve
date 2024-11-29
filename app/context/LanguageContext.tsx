@@ -43,6 +43,8 @@ export const translations = {
     noAttempts: 'No attempts',
     theme: 'Theme',
     loading: 'Loading...',
+    about: 'About Me',
+    aboutDescription: 'Hello! This is Sérgio Toledo from Brazil, I am a Software Engineer and passionate about programming. \n\nI created TilTwelve to help kids learn multiplication tables in a fun and interactive way.',
   },
   'pt-BR': {
     studyTitle: 'Tabuadas',
@@ -73,6 +75,8 @@ export const translations = {
     noAttempts: 'Sem tentativas',
     theme: 'Tema',
     loading: 'Carregando...',
+    about: 'Sobre Mim',
+    aboutDescription: 'Olá! Meu nome é Sérgio Toledo, sou Engenheiro de Software e apaixonado por programação. \n\nCriei o TilTwelve para ajudar crianças a aprenderem tabuadas de uma forma divertida e interativa.',
   },
   'es-ES': {
     studyTitle: 'Tablas de Multiplicar',
@@ -103,6 +107,8 @@ export const translations = {
     noAttempts: 'Sin intentos',
     theme: 'Tema',
     loading: 'Cargando...',
+    about: 'Sobre Mí',
+    aboutDescription: '¡Hola! Soy Sérgio Toledo de Brasil, soy Ingeniero de Software y apasionado por la programación. \n\nCreé TilTwelve para ayudar a los niños a aprender las tablas de multiplicar de una manera divertida e interactiva.',
   },
 };
 
