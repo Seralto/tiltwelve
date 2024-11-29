@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function MultipleChoiceQuizScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
-  const selectedTable = params.table ? parseInt(params.table as string) : null;
+  const [selectedTable, setSelectedTable] = useState<number | null>(params.table ? parseInt(params.table as string) : null);
   const [currentQuestion, setCurrentQuestion] = useState(generateQuestion());
   const [options, setOptions] = useState<number[]>([]);
   const [score, setScore] = useState(0);
@@ -20,6 +20,11 @@ export default function MultipleChoiceQuizScreen() {
   const { t } = useLanguage();
   const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
+
+  // Update selectedTable when params change
+  useEffect(() => {
+    setSelectedTable(params.table ? parseInt(params.table as string) : null);
+  }, [params.table]);
 
   function generateQuestion() {
     let num1: number;
@@ -116,7 +121,11 @@ export default function MultipleChoiceQuizScreen() {
             { borderColor: currentTheme.primary }
           ]}
           onPress={() => {
+            setSelectedTable(null);
             router.setParams({});
+            const newQuestion = generateQuestion();
+            setCurrentQuestion(newQuestion);
+            setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
           }}
         >
           <Text style={[
@@ -136,6 +145,7 @@ export default function MultipleChoiceQuizScreen() {
                 selectedTable === num && { backgroundColor: currentTheme.primary },
               ]}
               onPress={() => {
+                setSelectedTable(num);
                 router.setParams({ table: num.toString() });
               }}
             >
