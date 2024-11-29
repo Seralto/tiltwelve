@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Keyboard, ScrollView } from 'react-native';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
-import { Ionicons } from '@expo/vector-icons';
 
 const QuizScreen = () => {
   const { theme } = useTheme();
@@ -12,7 +11,8 @@ const QuizScreen = () => {
   const { addAttempt } = useStatistics();
   const params = useLocalSearchParams();
   const router = useRouter();
-  const selectedTable = params.table ? parseInt(params.table as string) : null;
+  const [options, setOptions] = useState<number[]>([]);
+  const [selectedTable, setSelectedTable] = useState<number | null>(params.table ? parseInt(params.table as string) : null);
   const currentTheme = themes[theme];
 
   function generateQuestion() {
@@ -20,6 +20,20 @@ const QuizScreen = () => {
     const num2 = Math.floor(Math.random() * 10) + 1;
     return { num1, num2 };
   }
+
+  const generateOptions = useCallback((correctAnswer: number) => {
+    const options = new Set<number>();
+    options.add(correctAnswer);
+
+    while (options.size < 6) {
+      const wrong = Math.max(1, correctAnswer + (Math.floor(Math.random() * 21) - 10));
+      if (wrong !== correctAnswer) {
+        options.add(wrong);
+      }
+    }
+
+    return Array.from(options).sort((a, b) => a - b);
+  }, []);
 
   const [currentQuestion, setCurrentQuestion] = useState(generateQuestion());
   const [answer, setAnswer] = useState('');
@@ -60,17 +74,21 @@ const QuizScreen = () => {
         <TouchableOpacity 
           style={[
             styles.allTablesButton, 
-            !selectedTable && styles.selectedAllTables,
+            !selectedTable && { backgroundColor: currentTheme.primary },
             { borderColor: currentTheme.primary }
           ]}
           onPress={() => {
-            router.replace('/quiz');
+            setSelectedTable(null);
+            router.setParams({});
+            const newQuestion = generateQuestion();
+            setCurrentQuestion(newQuestion);
+            setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
           }}
         >
           <Text style={[
             styles.allTablesText, 
             { color: currentTheme.text },
-            !selectedTable && { color: currentTheme.primary }
+            !selectedTable && { color: currentTheme.background }
           ]}>
             {t.allTables}
           </Text>
@@ -84,10 +102,8 @@ const QuizScreen = () => {
                 selectedTable === num && { backgroundColor: currentTheme.primary },
               ]}
               onPress={() => {
-                router.replace({
-                  pathname: '/quiz',
-                  params: { table: num }
-                });
+                setSelectedTable(num);
+                router.setParams({ table: num.toString() });
               }}
             >
               <Text 

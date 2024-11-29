@@ -4,7 +4,6 @@ import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function MultipleChoiceQuizScreen() {
   const params = useLocalSearchParams();
