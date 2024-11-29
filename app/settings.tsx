@@ -24,6 +24,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <Text style={[styles.title, { color: currentTheme.text }]}>{t.settings}</Text>
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>
           {t.theme}
@@ -109,6 +110,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
   },
   section: {
     marginBottom: 24,
