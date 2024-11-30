@@ -56,6 +56,15 @@ const StatisticsScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <ScrollView
+        style={[styles.scrollView, { backgroundColor: currentTheme.background }]}
+        contentContainerStyle={styles.scrollViewContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={[styles.title, { color: currentTheme.text }]}>{t.statistics}</Text>
+        {Array.from({ length: 12 }, (_, i) => i + 1).map(number => renderNumberStats(number))}
+      </ScrollView>
+
       <Link href="/study" asChild>
         <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
           <View style={styles.backButtonContent}>
@@ -66,15 +75,6 @@ const StatisticsScreen = () => {
           </View>
         </TouchableOpacity>
       </Link>
-
-      <ScrollView
-        style={[styles.scrollView, { backgroundColor: currentTheme.background }]}
-        contentContainerStyle={styles.scrollViewContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={[styles.title, { color: currentTheme.text }]}>{t.statistics}</Text>
-        {Array.from({ length: 12 }, (_, i) => i + 1).map(number => renderNumberStats(number))}
-      </ScrollView>
     </View>
   );
 };
@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 16,
   },
   header: {
     flexDirection: 'row',
@@ -157,6 +156,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
+    paddingVertical: 10,
   },
   backButtonText: {
     fontSize: 18,
