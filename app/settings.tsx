@@ -108,7 +108,12 @@ export default function SettingsScreen() {
 
       <Link href="/study" asChild>
         <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
-          <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>{t.backToStudy}</Text>
+          <View style={styles.backButtonContent}>
+            <Ionicons name="arrow-back" size={24} color={currentTheme.buttonText} />
+            <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>
+              {t.backToStudy}
+            </Text>
+          </View>
         </TouchableOpacity>
       </Link>
     </View>
@@ -169,16 +174,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  backButton: {
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 'auto',
-  },
-  backButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   aboutButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -198,5 +193,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#0A84FF',
     color: '#fff',
     borderRadius: 12,
+  },
+  backButton: {
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 'auto',
+  },
+  backButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  backButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

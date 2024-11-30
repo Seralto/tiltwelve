@@ -4,6 +4,7 @@ import { Link } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const StatisticsScreen = () => {
   const { theme } = useTheme();
@@ -54,18 +55,20 @@ const StatisticsScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
-      <View style={styles.header}>
-        <Link href="/study" asChild>
-          <TouchableOpacity>
-            <Text style={[styles.backButton, { color: currentTheme.text }]}>
+      <Link href="/study" asChild>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
+          <View style={styles.backButtonContent}>
+            <Ionicons name="arrow-back" size={24} color={currentTheme.buttonText} />
+            <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>
               {t.backToStudy}
             </Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
+          </View>
+        </TouchableOpacity>
+      </Link>
 
       <ScrollView
         style={[styles.scrollView, { backgroundColor: currentTheme.background }]}
+        contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.title, { color: currentTheme.text }]}>{t.statistics}</Text>
@@ -78,7 +81,8 @@ const StatisticsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   header: {
     flexDirection: 'row',
@@ -86,13 +90,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  backButton: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   scrollView: {
     flex: 1,
     padding: 16,
+    marginTop: 12,
+  },
+  scrollViewContent: {
+    paddingBottom: 20,
   },
   title: {
     fontSize: 24,
@@ -137,6 +141,20 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: 14,
     fontStyle: 'italic',
+  },
+  backButton: {
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 'auto',
+  },
+  backButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  backButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

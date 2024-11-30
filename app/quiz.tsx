@@ -4,6 +4,7 @@ import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function QuizScreen() {
   const params = useLocalSearchParams();
@@ -165,16 +166,6 @@ export default function QuizScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
-      <View style={styles.header}>
-        <Link href="/study" asChild>
-          <TouchableOpacity>
-            <Text style={[styles.backButton, { color: currentTheme.text }]}>
-              {t.backToStudy}
-            </Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
-
       {renderTableSelection()}
 
       <View style={styles.scoreContainer}>
@@ -229,10 +220,13 @@ export default function QuizScreen() {
       ) : null}
 
       <Link href="/study" asChild>
-        <TouchableOpacity style={[styles.studyButton, { backgroundColor: currentTheme.secondary }]}>
-          <Text style={[styles.studyButtonText, { color: currentTheme.buttonText }]}>
-            {t.backToStudy}
-          </Text>
+        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
+          <View style={styles.backButtonContent}>
+            <Ionicons name="arrow-back" size={24} color={currentTheme.buttonText} />
+            <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>
+              {t.backToStudy}
+            </Text>
+          </View>
         </TouchableOpacity>
       </Link>
     </View>
@@ -249,9 +243,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
-  },
-  backButton: {
-    fontSize: 18,
   },
   scoreContainer: {
     alignItems: 'center',
@@ -357,6 +348,20 @@ const styles = StyleSheet.create({
   },
   numberText: {
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  backButton: {
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 'auto',
+  },
+  backButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  backButtonText: {
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });

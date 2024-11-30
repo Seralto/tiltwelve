@@ -13,15 +13,6 @@ export default function QuizModeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: currentTheme.text }]}>{t.selectQuizMode}</Text>
-        <Link href="/settings" asChild>
-          <TouchableOpacity style={styles.settingsButton}>
-            <Ionicons name="settings-outline" size={24} color={currentTheme.text} />
-          </TouchableOpacity>
-        </Link>
-      </View>
-
       <View style={styles.modesContainer}>
         <TouchableOpacity
           style={[styles.modeCard, { backgroundColor: currentTheme.card }]}
@@ -52,7 +43,12 @@ export default function QuizModeScreen() {
 
       <Link href="/study" asChild>
         <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
-          <Text style={[styles.buttonText, { color: currentTheme.buttonText }]}>{t.backToStudy}</Text>
+          <View style={styles.backButtonContent}>
+            <Ionicons name="arrow-back" size={24} color={currentTheme.buttonText} />
+            <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>
+              {t.backToStudy}
+            </Text>
+          </View>
         </TouchableOpacity>
       </Link>
     </View>
@@ -111,15 +107,14 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 15,
     borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
+    marginTop: 'auto',
   },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  backButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
   },
   backButtonText: {
-    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },

@@ -38,7 +38,8 @@ export default function AboutScreen() {
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <View style={styles.header}>
         <Link href="/settings" asChild>
-          <TouchableOpacity>
+          <TouchableOpacity style={styles.backButtonContainer}>
+            <Ionicons name="arrow-back" size={24} color={currentTheme.text} />
             <Text style={[styles.backButton, { color: currentTheme.text }]}>
               {t.settings}
             </Text>
@@ -129,8 +130,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     marginBottom: 20,
   },
+  backButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 20,
+  },
   backButton: {
     fontSize: 16,
+    fontWeight: '500',
   },
   title: {
     fontSize: 24,
