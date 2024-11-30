@@ -304,6 +304,20 @@ export default function MultipleChoiceQuizScreen() {
         </Text>
       ) : null}
 
+      <Link href={{
+        pathname: '/quiz',
+        params: { table: selectedTable?.toString() }
+      }} asChild>
+        <TouchableOpacity style={[styles.toggleButton, { backgroundColor: currentTheme.secondary }]}>
+          <View style={styles.toggleButtonContent}>
+            <Ionicons name="keypad-outline" size={24} color={currentTheme.buttonText} />
+            <Text style={[styles.toggleButtonText, { color: currentTheme.buttonText }]}>
+              {t.switchToInput}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </Link>
+
       <Link href="/study" asChild>
         <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
           <View style={styles.backButtonContent}>
@@ -456,6 +470,27 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   backButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  toggleButton: {
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  toggleButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#aaa',
+    marginBottom: 20,
+    paddingVertical: 12,
+    marginTop: 10,
+    gap: 8,
+  },
+  toggleButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
   },

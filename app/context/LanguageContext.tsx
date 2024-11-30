@@ -47,6 +47,8 @@ export const translations = {
     loading: 'Loading...',
     about: 'About Me',
     aboutDescription: 'Hello! This is Sérgio Toledo from Brazil, I am a Software Engineer and passionate about programming. \n\nI created TilTwelve to help kids learn multiplication tables in a fun and interactive way.',
+    switchToMultiple: 'Switch to Multiple Choice',
+    switchToInput: 'Switch to Input Mode',
   },
   'pt-BR': {
     studyTitle: 'Tabuadas',
@@ -81,6 +83,8 @@ export const translations = {
     loading: 'Carregando...',
     about: 'Sobre Mim',
     aboutDescription: 'Olá! Meu nome é Sérgio Toledo, sou Engenheiro de Software e apaixonado por programação. \n\nCriei o TilTwelve para ajudar crianças a aprenderem tabuadas de uma forma divertida e interativa.',
+    switchToMultiple: 'Mudar para Múltipla Escolha',
+    switchToInput: 'Mudar para Modo de Entrada',
   },
   'es-ES': {
     studyTitle: 'Tablas de Multiplicar',
@@ -115,6 +119,8 @@ export const translations = {
     loading: 'Cargando...',
     about: 'Sobre Mí',
     aboutDescription: '¡Hola! Soy Sérgio Toledo de Brasil, soy Ingeniero de Software y apasionado por la programación. \n\nCreé TilTwelve para ayudar a los niños a aprender las tablas de multiplicar de una manera divertida e interactiva.',
+    switchToMultiple: 'Cambiar a Opción Múltiple',
+    switchToInput: 'Cambiar a Modo de Entrada',
   },
 };
 
