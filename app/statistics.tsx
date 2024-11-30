@@ -26,6 +26,7 @@ const StatisticsScreen = () => {
         <Text style={[styles.numberTitle, { color: currentTheme.text }]}>
           {t.table} {number}
         </Text>
+        <View style={[styles.separator, { backgroundColor: currentTheme.border }]} />
         <View style={styles.equationsContainer}>
           {equations.map(({ equation, percentage, attempts }) => (
             <View key={equation} style={styles.equationRow}>
@@ -118,6 +119,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 12,
+  },
+  separator: {
+    height: 2,
+    width: '100%',
+    marginBottom: 10,
   },
   equationsContainer: {
     flexDirection: 'row',
