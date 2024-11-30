@@ -35,9 +35,9 @@ export default function QuizScreen() {
       if (currentTable) {
         num1 = currentTable;
       } else {
-        num1 = Math.floor(Math.random() * 10) + 1;
+        num1 = Math.floor(Math.random() * 12) + 1; // Tables go from 1-12
       }
-      num2 = Math.floor(Math.random() * 10) + 1;
+      num2 = Math.floor(Math.random() * 10) + 1;  // Multiplier goes from 1-10
       questionKey = `${num1}x${num2}`;
       attempts++;
     } while (used.has(questionKey) && attempts < maxAttempts);

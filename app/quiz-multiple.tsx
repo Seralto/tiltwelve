@@ -16,6 +16,7 @@ export default function MultipleChoiceQuizScreen() {
   const [feedback, setFeedback] = useState('');
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [buttonScales] = useState(Array(6).fill(new Animated.Value(1))); 
+  const [isProcessingAnswer, setIsProcessingAnswer] = useState(false);
   const { theme } = useTheme();
   const { t } = useLanguage();
   const { addAttempt } = useStatistics();
@@ -37,9 +38,9 @@ export default function MultipleChoiceQuizScreen() {
       if (currentTable) {
         num1 = currentTable;
       } else {
-        num1 = Math.floor(Math.random() * 10) + 1;
+        num1 = Math.floor(Math.random() * 12) + 1; // Tables go from 1-12
       }
-      num2 = Math.floor(Math.random() * 10) + 1;
+      num2 = Math.floor(Math.random() * 10) + 1;  // Multiplier goes from 1-10
       questionKey = `${num1}x${num2}`;
       attempts++;
     } while (used.has(questionKey) && attempts < maxAttempts);
@@ -111,8 +112,9 @@ export default function MultipleChoiceQuizScreen() {
   }, [buttonScales, score]);
 
   const handleAnswer = useCallback((answer: number, index: number) => {
-    if (selectedAnswer !== null) return; // Prevent multiple answers
+    if (selectedAnswer !== null || isProcessingAnswer) return; // Prevent multiple answers
     
+    setIsProcessingAnswer(true);
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
     const isCorrect = answer === correctAnswer;
     setSelectedAnswer(answer);
@@ -129,10 +131,12 @@ export default function MultipleChoiceQuizScreen() {
 
     animateButton(index, isCorrect);
 
+    // Wait longer before clearing the feedback and generating new question
     setTimeout(() => {
       generateNewQuestion();
-    }, 1500);
-  }, [currentQuestion, addAttempt, t, selectedAnswer, animateButton, score, generateNewQuestion]);
+      setIsProcessingAnswer(false);
+    }, 2000); // Increased from 1500 to 2000ms
+  }, [currentQuestion, addAttempt, t, selectedAnswer, animateButton, score, generateNewQuestion, isProcessingAnswer]);
 
   const renderTableSelection = () => {
     return (
