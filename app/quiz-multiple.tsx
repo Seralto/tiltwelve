@@ -9,7 +9,8 @@ export default function MultipleChoiceQuizScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const [selectedTable, setSelectedTable] = useState<number | null>(params.table ? parseInt(params.table as string) : null);
-  const [currentQuestion, setCurrentQuestion] = useState(generateQuestion());
+  const [usedQuestions, setUsedQuestions] = useState<Set<string>>(new Set());
+  const [currentQuestion, setCurrentQuestion] = useState(() => generateQuestion(selectedTable, usedQuestions, setUsedQuestions));
   const [options, setOptions] = useState<number[]>([]);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState('');
@@ -20,24 +21,55 @@ export default function MultipleChoiceQuizScreen() {
   const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
 
-  // Update selectedTable when params change
-  useEffect(() => {
-    setSelectedTable(params.table ? parseInt(params.table as string) : null);
-  }, [params.table]);
-
-  function generateQuestion() {
+  function generateQuestion(
+    currentTable: number | null,
+    used: Set<string>,
+    setUsed: React.Dispatch<React.SetStateAction<Set<string>>>
+  ) {
     let num1: number;
-    if (selectedTable) {
-      num1 = selectedTable;
+    let num2: number;
+    let questionKey: string;
+    let attempts = 0;
+    const maxAttempts = 100;
+
+    // Try to generate a unique question
+    do {
+      if (currentTable) {
+        num1 = currentTable;
+      } else {
+        num1 = Math.floor(Math.random() * 10) + 1;
+      }
+      num2 = Math.floor(Math.random() * 10) + 1;
+      questionKey = `${num1}x${num2}`;
+      attempts++;
+    } while (used.has(questionKey) && attempts < maxAttempts);
+
+    // If all possible questions have been used or too many attempts, reset the history
+    if (attempts >= maxAttempts) {
+      setUsed(new Set());
     } else {
-      // When no table is selected (All), use random number from 1-12
-      num1 = Math.floor(Math.random() * 12) + 1;
+      setUsed(prev => new Set(prev).add(questionKey));
     }
-    const num2 = Math.floor(Math.random() * 12) + 1;
+
     return { num1, num2 };
   }
 
-  const generateOptions = useCallback((correctAnswer: number) => {
+  // Update selectedTable when params change
+  useEffect(() => {
+    setSelectedTable(params.table ? parseInt(params.table as string) : null);
+    setUsedQuestions(new Set()); // Reset used questions when table changes
+  }, [params.table]);
+
+  // Generate new question
+  const generateNewQuestion = useCallback(() => {
+    const newQuestion = generateQuestion(selectedTable, usedQuestions, setUsedQuestions);
+    setCurrentQuestion(newQuestion);
+    setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
+    setFeedback('');
+    setSelectedAnswer(null);
+  }, [selectedTable, usedQuestions]);
+
+  function generateOptions(correctAnswer: number) {
     const options = new Set<number>();
     options.add(correctAnswer);
 
@@ -49,15 +81,11 @@ export default function MultipleChoiceQuizScreen() {
     }
 
     return Array.from(options).sort((a, b) => a - b);
-  }, []);
+  }
 
   // Only run on initial mount and table change
   useEffect(() => {
-    const newQuestion = generateQuestion();
-    setCurrentQuestion(newQuestion);
-    setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
-    setFeedback('');
-    setSelectedAnswer(null);
+    generateNewQuestion();
   }, [selectedTable]);
 
   const animateButton = useCallback((index: number, isCorrect: boolean) => {
@@ -102,13 +130,9 @@ export default function MultipleChoiceQuizScreen() {
     animateButton(index, isCorrect);
 
     setTimeout(() => {
-      const newQuestion = generateQuestion();
-      setCurrentQuestion(newQuestion);
-      setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
-      setFeedback('');
-      setSelectedAnswer(null);
+      generateNewQuestion();
     }, 1500);
-  }, [currentQuestion, addAttempt, t, selectedAnswer, animateButton, score, generateOptions]);
+  }, [currentQuestion, addAttempt, t, selectedAnswer, animateButton, score, generateNewQuestion]);
 
   const renderTableSelection = () => {
     return (
@@ -122,9 +146,7 @@ export default function MultipleChoiceQuizScreen() {
           onPress={() => {
             setSelectedTable(null);
             router.setParams({});
-            const newQuestion = generateQuestion();
-            setCurrentQuestion(newQuestion);
-            setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
+            generateNewQuestion();
           }}
         >
           <Text style={[

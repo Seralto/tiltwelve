@@ -5,48 +5,75 @@ import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
 
-const QuizScreen = () => {
-  const { theme } = useTheme();
-  const { t } = useLanguage();
-  const { addAttempt } = useStatistics();
+export default function QuizScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
-  const [options, setOptions] = useState<number[]>([]);
   const [selectedTable, setSelectedTable] = useState<number | null>(params.table ? parseInt(params.table as string) : null);
-  const currentTheme = themes[theme];
-
-  function generateQuestion() {
-    const num1 = selectedTable || Math.floor(Math.random() * 12) + 1;
-    const num2 = Math.floor(Math.random() * 12) + 1;
-    return { num1, num2 };
-  }
-
-  const generateOptions = useCallback((correctAnswer: number) => {
-    const options = new Set<number>();
-    options.add(correctAnswer);
-
-    while (options.size < 6) {
-      const wrong = Math.max(1, correctAnswer + (Math.floor(Math.random() * 21) - 10));
-      if (wrong !== correctAnswer) {
-        options.add(wrong);
-      }
-    }
-
-    return Array.from(options).sort((a, b) => a - b);
-  }, []);
-
-  const [currentQuestion, setCurrentQuestion] = useState(generateQuestion());
+  const [usedQuestions, setUsedQuestions] = useState<Set<string>>(new Set());
+  const [currentQuestion, setCurrentQuestion] = useState(() => generateQuestion(selectedTable, usedQuestions, setUsedQuestions));
   const [answer, setAnswer] = useState('');
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState('');
+  const { theme } = useTheme();
+  const { t } = useLanguage();
+  const { addAttempt } = useStatistics();
+  const currentTheme = themes[theme];
 
+  function generateQuestion(
+    currentTable: number | null,
+    used: Set<string>,
+    setUsed: React.Dispatch<React.SetStateAction<Set<string>>>
+  ) {
+    let num1: number;
+    let num2: number;
+    let questionKey: string;
+    let attempts = 0;
+    const maxAttempts = 100;
+
+    // Try to generate a unique question
+    do {
+      if (currentTable) {
+        num1 = currentTable;
+      } else {
+        num1 = Math.floor(Math.random() * 10) + 1;
+      }
+      num2 = Math.floor(Math.random() * 10) + 1;
+      questionKey = `${num1}x${num2}`;
+      attempts++;
+    } while (used.has(questionKey) && attempts < maxAttempts);
+
+    // If all possible questions have been used or too many attempts, reset the history
+    if (attempts >= maxAttempts) {
+      setUsed(new Set());
+    } else {
+      setUsed(prev => new Set(prev).add(questionKey));
+    }
+
+    return { num1, num2 };
+  }
+
+  // Update selectedTable when params change
   useEffect(() => {
-    setCurrentQuestion(generateQuestion());
+    setSelectedTable(params.table ? parseInt(params.table as string) : null);
+    setUsedQuestions(new Set()); // Reset used questions when table changes
+  }, [params.table]);
+
+  // Generate new question
+  const generateNewQuestion = useCallback(() => {
+    const newQuestion = generateQuestion(selectedTable, usedQuestions, setUsedQuestions);
+    setCurrentQuestion(newQuestion);
+    setAnswer('');
+    setFeedback('');
+  }, [selectedTable, usedQuestions]);
+
+  // Only run on initial mount and table change
+  useEffect(() => {
+    generateNewQuestion();
   }, [selectedTable]);
 
-  const checkAnswer = () => {
-    if (!answer) return; // Don't process empty answers
-    
+  const handleSubmit = () => {
+    if (!answer) return;
+
     const userAnswer = parseInt(answer);
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
     const isCorrect = userAnswer === correctAnswer;
@@ -62,11 +89,25 @@ const QuizScreen = () => {
     }
 
     setTimeout(() => {
-      setAnswer('');
-      setFeedback('');
-      setCurrentQuestion(generateQuestion());
+      generateNewQuestion();
     }, 1500);
   };
+
+  const generateOptions = useCallback((correctAnswer: number) => {
+    const options = new Set<number>();
+    options.add(correctAnswer);
+
+    while (options.size < 6) {
+      const wrong = Math.max(1, correctAnswer + (Math.floor(Math.random() * 21) - 10));
+      if (wrong !== correctAnswer) {
+        options.add(wrong);
+      }
+    }
+
+    return Array.from(options).sort((a, b) => a - b);
+  }, []);
+
+  const [options, setOptions] = useState(generateOptions(currentQuestion.num1 * currentQuestion.num2));
 
   const renderTableSelection = () => {
     return (
@@ -80,7 +121,7 @@ const QuizScreen = () => {
           onPress={() => {
             setSelectedTable(null);
             router.setParams({});
-            const newQuestion = generateQuestion();
+            const newQuestion = generateQuestion(null, usedQuestions, setUsedQuestions);
             setCurrentQuestion(newQuestion);
             setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
           }}
@@ -158,7 +199,7 @@ const QuizScreen = () => {
           onChangeText={setAnswer}
           keyboardType="number-pad"
           returnKeyType="done"
-          onSubmitEditing={checkAnswer}
+          onSubmitEditing={handleSubmit}
           placeholder={t.enterAnswer}
           placeholderTextColor={currentTheme.secondary}
           maxLength={3}
@@ -171,7 +212,7 @@ const QuizScreen = () => {
             { backgroundColor: currentTheme.primary },
             !answer && { opacity: 0.5 }
           ]}
-          onPress={checkAnswer}
+          onPress={handleSubmit}
           disabled={!answer}
         >
           <Text style={styles.submitButtonText}>{t.submit}</Text>
@@ -319,5 +360,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-export default QuizScreen;
