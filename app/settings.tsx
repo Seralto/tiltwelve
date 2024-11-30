@@ -188,10 +188,10 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     marginTop: 10,
     justifyContent: 'center',
-    borderColor: '#000',
+    borderColor: '#666',
     borderWidth: 1,
-    padding: 10,
     borderRadius: 10,
+    padding: 10,
   },
   aboutButtonText: {
     fontSize: 18,

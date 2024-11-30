@@ -36,17 +36,6 @@ export default function AboutScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
-      <View style={styles.header}>
-        <Link href="/settings" asChild>
-          <TouchableOpacity style={styles.backButtonContainer}>
-            <Ionicons name="arrow-back" size={24} color={currentTheme.text} />
-            <Text style={[styles.backButton, { color: currentTheme.text }]}>
-              {t.settings}
-            </Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
-
       <Text style={[styles.title, { color: currentTheme.text }]}>{t.about}</Text>
       
       <View style={[styles.card, { backgroundColor: currentTheme.card }]}>
@@ -116,6 +105,15 @@ export default function AboutScreen() {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Link href="/settings" asChild>
+          <TouchableOpacity style={styles.backButtonContainer}>
+            <Ionicons name="arrow-back" size={24} color={currentTheme.text} />
+            <Text style={[styles.backButton, { color: currentTheme.text }]}>
+              {t.settings}
+            </Text>
+          </TouchableOpacity>
+        </Link>
     </View>
   );
 }
@@ -137,8 +135,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   backButton: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   title: {
     fontSize: 24,
