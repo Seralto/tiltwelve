@@ -5,6 +5,7 @@ import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MultipleChoiceQuizScreen() {
   const params = useLocalSearchParams();
@@ -13,7 +14,7 @@ export default function MultipleChoiceQuizScreen() {
   const [usedQuestions, setUsedQuestions] = useState<Set<string>>(new Set());
   const [currentQuestion, setCurrentQuestion] = useState(() => generateQuestion(selectedTable, usedQuestions, setUsedQuestions));
   const [options, setOptions] = useState<number[]>([]);
-  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [buttonScales] = useState(Array(6).fill(new Animated.Value(1))); 
@@ -90,54 +91,69 @@ export default function MultipleChoiceQuizScreen() {
     generateNewQuestion();
   }, [selectedTable]);
 
-  const animateButton = useCallback((index: number, isCorrect: boolean) => {
-    const scaleDown = Animated.spring(buttonScales[index], {
-      toValue: 0.95,
-      useNativeDriver: true,
-    });
-    const scaleUp = Animated.spring(buttonScales[index], {
-      toValue: 1,
-      useNativeDriver: true,
-    });
-    const scaleSequence = Animated.sequence([scaleDown, scaleUp]);
-
-    scaleSequence.start(() => {
-      setTimeout(() => {
-        if (isCorrect) {
-          setScore(score + 1);
-        }
-        setFeedback('');
-        setSelectedAnswer(null);
-      }, 1500);
-    });
-  }, [buttonScales, score]);
-
-  const handleAnswer = useCallback((answer: number, index: number) => {
-    if (selectedAnswer !== null || isProcessingAnswer) return; // Prevent multiple answers
+  const handleAnswer = useCallback(async (answer: number, index: number) => {
+    if (selectedAnswer !== null || isProcessingAnswer) return;
     
     setIsProcessingAnswer(true);
-    const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
-    const isCorrect = answer === correctAnswer;
     setSelectedAnswer(answer);
 
-    // Add attempt before updating UI
+    const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
+    const isCorrect = answer === correctAnswer;
+
     addAttempt(currentQuestion.num1, currentQuestion.num2, isCorrect);
 
     if (isCorrect) {
-      setScore(score + 1);
       setFeedback(t.correct);
+      // Get the table number from the current question
+      const tableNumber = currentQuestion.num1;
+      const key = `table_${tableNumber}_score`;
+      
+      // Load current score for this table
+      const savedScore = await AsyncStorage.getItem(key);
+      const currentTableScore = savedScore ? parseInt(savedScore) : 0;
+      const newScore = currentTableScore + 1;
+      
+      // Save new score
+      await AsyncStorage.setItem(key, newScore.toString());
+      
+      // If we're in a specific table view, update the displayed score
+      if (selectedTable === tableNumber) {
+        setHighScore(newScore);
+      } else if (!selectedTable) {
+        // In "All" mode, reload the total score
+        let totalScore = 0;
+        for (let table = 1; table <= 12; table++) {
+          const tableKey = `table_${table}_score`;
+          const tableScore = await AsyncStorage.getItem(tableKey);
+          if (tableScore) {
+            totalScore += parseInt(tableScore);
+          }
+        }
+        setHighScore(totalScore);
+      }
     } else {
       setFeedback(`${t.incorrect} ${correctAnswer}`);
     }
 
-    animateButton(index, isCorrect);
+    // Animate the selected button
+    Animated.sequence([
+      Animated.spring(buttonScales[index], {
+        toValue: 0.95,
+        useNativeDriver: true,
+      }),
+      Animated.spring(buttonScales[index], {
+        toValue: 1,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
-    // Wait longer before clearing the feedback and generating new question
     setTimeout(() => {
-      generateNewQuestion();
+      setSelectedAnswer(null);
+      setFeedback('');
       setIsProcessingAnswer(false);
-    }, 2000); // Increased from 1500 to 2000ms
-  }, [currentQuestion, addAttempt, t, selectedAnswer, animateButton, score, generateNewQuestion, isProcessingAnswer]);
+      generateNewQuestion();
+    }, 2000);
+  }, [currentQuestion, selectedAnswer, isProcessingAnswer, buttonScales, t, selectedTable]);
 
   const renderTableSelection = () => {
     return (
@@ -191,13 +207,56 @@ export default function MultipleChoiceQuizScreen() {
     );
   };
 
+  // Load high score when table changes
+  useEffect(() => {
+    const loadHighScore = async () => {
+      try {
+        if (selectedTable) {
+          const key = `table_${selectedTable}_score`;
+          const savedScore = await AsyncStorage.getItem(key);
+          setHighScore(savedScore ? parseInt(savedScore) : 0);
+        } else {
+          // Sum up all table scores for global score
+          let totalScore = 0;
+          for (let table = 1; table <= 12; table++) {
+            const key = `table_${table}_score`;
+            const savedScore = await AsyncStorage.getItem(key);
+            if (savedScore) {
+              totalScore += parseInt(savedScore);
+            }
+          }
+          setHighScore(totalScore);
+        }
+      } catch (error) {
+        console.error('Error loading score:', error);
+      }
+    };
+    loadHighScore();
+  }, [selectedTable]);
+
+  // Save high score when score changes
+  useEffect(() => {
+    const saveHighScore = async () => {
+      if (!selectedTable) return; // Don't save global score as it's computed
+      try {
+        const key = `table_${selectedTable}_score`;
+        await AsyncStorage.setItem(key, highScore.toString());
+      } catch (error) {
+        console.error('Error saving score:', error);
+      }
+    };
+    saveHighScore();
+  }, [highScore, selectedTable]);
+
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       {renderTableSelection()}
 
       <View style={styles.scoreContainer}>
         <Text style={[styles.scoreText, { color: currentTheme.secondary }]}>
-          {t.score}: {score}
+          {selectedTable 
+            ? t.tableScore.replace('{{table}}', selectedTable.toString())
+            : t.globalScore}: {highScore}
         </Text>
       </View>
 
@@ -281,6 +340,12 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  highScoreText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
   questionContainer: {
     padding: 20,

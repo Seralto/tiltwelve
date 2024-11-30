@@ -5,6 +5,7 @@ import { useTheme, themes } from './context/ThemeContext';
 import { useLanguage } from './context/LanguageContext';
 import { useStatistics } from './context/StatisticsContext';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function QuizScreen() {
   const params = useLocalSearchParams();
@@ -14,7 +15,9 @@ export default function QuizScreen() {
   const [currentQuestion, setCurrentQuestion] = useState(() => generateQuestion(selectedTable, usedQuestions, setUsedQuestions));
   const [answer, setAnswer] = useState('');
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   const [feedback, setFeedback] = useState('');
+  const [isProcessingAnswer, setIsProcessingAnswer] = useState(false);
   const { theme } = useTheme();
   const { t } = useLanguage();
   const { addAttempt } = useStatistics();
@@ -53,6 +56,47 @@ export default function QuizScreen() {
     return { num1, num2 };
   }
 
+  // Load high score when table changes
+  useEffect(() => {
+    const loadHighScore = async () => {
+      try {
+        if (selectedTable) {
+          const key = `table_${selectedTable}_score`;
+          const savedScore = await AsyncStorage.getItem(key);
+          setHighScore(savedScore ? parseInt(savedScore) : 0);
+        } else {
+          // Sum up all table scores for global score
+          let totalScore = 0;
+          for (let table = 1; table <= 12; table++) {
+            const key = `table_${table}_score`;
+            const savedScore = await AsyncStorage.getItem(key);
+            if (savedScore) {
+              totalScore += parseInt(savedScore);
+            }
+          }
+          setHighScore(totalScore);
+        }
+      } catch (error) {
+        console.error('Error loading score:', error);
+      }
+    };
+    loadHighScore();
+  }, [selectedTable]);
+
+  // Save high score when score changes
+  useEffect(() => {
+    const saveHighScore = async () => {
+      if (!selectedTable) return; // Don't save global score as it's computed
+      try {
+        const key = `table_${selectedTable}_score`;
+        await AsyncStorage.setItem(key, highScore.toString());
+      } catch (error) {
+        console.error('Error saving score:', error);
+      }
+    };
+    saveHighScore();
+  }, [highScore, selectedTable]);
+
   // Update selectedTable when params change
   useEffect(() => {
     setSelectedTable(params.table ? parseInt(params.table as string) : null);
@@ -72,26 +116,56 @@ export default function QuizScreen() {
     generateNewQuestion();
   }, [selectedTable]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!answer) return;
 
     const userAnswer = parseInt(answer);
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
     const isCorrect = userAnswer === correctAnswer;
 
-    // Add attempt before updating UI
     addAttempt(currentQuestion.num1, currentQuestion.num2, isCorrect);
 
     if (isCorrect) {
-      setScore(score + 1);
       setFeedback(t.correct);
+      // Get the table number from the current question
+      const tableNumber = currentQuestion.num1;
+      const key = `table_${tableNumber}_score`;
+      
+      // Load current score for this table
+      const savedScore = await AsyncStorage.getItem(key);
+      const currentTableScore = savedScore ? parseInt(savedScore) : 0;
+      const newScore = currentTableScore + 1;
+      
+      // Save new score
+      await AsyncStorage.setItem(key, newScore.toString());
+      
+      // If we're in a specific table view, update the displayed score
+      if (selectedTable === tableNumber) {
+        setHighScore(newScore);
+      } else if (!selectedTable) {
+        // In "All" mode, reload the total score
+        let totalScore = 0;
+        for (let table = 1; table <= 12; table++) {
+          const tableKey = `table_${table}_score`;
+          const tableScore = await AsyncStorage.getItem(tableKey);
+          if (tableScore) {
+            totalScore += parseInt(tableScore);
+          }
+        }
+        setHighScore(totalScore);
+      }
     } else {
       setFeedback(`${t.incorrect} ${correctAnswer}`);
     }
 
+    setAnswer('');
+    setIsProcessingAnswer(true);
+
     setTimeout(() => {
+      setFeedback('');
+      setIsProcessingAnswer(false);
       generateNewQuestion();
-    }, 1500);
+    }, 2000);
   };
 
   const generateOptions = useCallback((correctAnswer: number) => {
@@ -170,7 +244,9 @@ export default function QuizScreen() {
 
       <View style={styles.scoreContainer}>
         <Text style={[styles.scoreText, { color: currentTheme.secondary }]}>
-          {t.score}: {score}
+          {selectedTable 
+            ? t.tableScore.replace('{{table}}', selectedTable.toString())
+            : t.globalScore}: {highScore}
         </Text>
       </View>
 
@@ -250,6 +326,12 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  highScoreText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
   questionContainer: {
     padding: 20,
