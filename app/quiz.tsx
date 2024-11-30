@@ -240,6 +240,10 @@ export default function QuizScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <Text style={[styles.title, { color: currentTheme.text }]}>
+        {t.quizTitle}
+      </Text>
+
       {renderTableSelection()}
 
       <View style={styles.scoreContainer}>
@@ -347,8 +351,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
   questionContainer: {
-    padding: 20,
+    padding: 16,
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 20,
