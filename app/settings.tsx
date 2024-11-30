@@ -98,11 +98,13 @@ export default function SettingsScreen() {
       </View>
 
       <Link href="/about" asChild>
-        <TouchableOpacity style={[styles.aboutButton, { backgroundColor: currentTheme.primary }]}>
-          <Text style={[styles.aboutButtonText, { color: currentTheme.buttonText }]}>
-            <Ionicons name="information-circle-outline" size={34} color={currentTheme.buttonText} />
-            {t.about}
-          </Text>
+        <TouchableOpacity style={[styles.aboutButton, { backgroundColor: currentTheme.secondary }]}>
+          <View style={styles.aboutButtonContent}>
+            <Ionicons name="information-circle-outline" size={28} color={currentTheme.buttonText} />
+            <Text style={[styles.aboutButtonText, { color: currentTheme.buttonText }]}>
+              {t.about}
+            </Text>
+          </View>
         </TouchableOpacity>
       </Link>
 
@@ -175,24 +177,25 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   aboutButton: {
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  aboutButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 5,
+    marginBottom: 30,
+    marginTop: 10,
     justifyContent: 'center',
-    padding: 20,
-    borderRadius: 12,
-    marginTop: 16,
-    marginBottom: 16,
-    marginHorizontal: 20,
+    borderColor: '#000',
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
   },
   aboutButtonText: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#0A84FF',
-    color: '#fff',
-    borderRadius: 12,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   backButton: {
     padding: 15,
