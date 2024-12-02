@@ -73,6 +73,37 @@ A beautiful and interactive multiplication tables learning app that makes math f
 - AsyncStorage
 - React Context API
 
+## 📦 Building for Production
+
+### Android (Play Store)
+
+1. Install EAS CLI
+   ```bash
+   npm install -g eas-cli
+   ```
+
+2. Login to your Expo account
+   ```bash
+   eas login
+   ```
+
+3. Configure the build
+   ```bash
+   eas build:configure
+   ```
+
+4. Create a production build
+   ```bash
+   eas build --platform android --profile production
+   ```
+
+5. Submit to Play Store
+   ```bash
+   eas submit --platform android
+   ```
+
+Note: Make sure you have set up your Google Play Console account and have the necessary credentials.
+
 ## 📱 Screenshots
 
 [Add your app screenshots here]

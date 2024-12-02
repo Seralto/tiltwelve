@@ -1,29 +1,37 @@
 {
   "expo": {
     "name": "TilTwelve",
-    "slug": "TilTwelve",
+    "slug": "tiltwelve",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "tiltwelve",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.sergiotoledo.tiltwelve",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": []
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
       [
         "expo-splash-screen",
         {
@@ -34,8 +42,12 @@
         }
       ]
     ],
-    "experiments": {
-      "typedRoutes": true
+    "description": "Learn multiplication tables in a fun and interactive way. Practice with input or multiple choice quizzes, track your progress, and master multiplication in multiple languages.",
+    "primaryColor": "#4A90E2",
+    "extra": {
+      "eas": {
+        "projectId": "9b9b6f11-b3db-4a61-8ee4-11ff0fc8cad9"
+      }
     }
   }
 }
