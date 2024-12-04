@@ -56,6 +56,14 @@ const StatisticsScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <View style={styles.header}>
+        <View style={styles.headerLeft} />
+        <Link href="/" asChild>
+          <TouchableOpacity style={styles.homeButton}>
+            <Ionicons name="home-outline" size={24} color={currentTheme.text} />
+          </TouchableOpacity>
+        </Link>
+      </View>
       <ScrollView
         style={[styles.scrollView, { backgroundColor: currentTheme.background }]}
         contentContainerStyle={styles.scrollViewContent}
@@ -64,36 +72,29 @@ const StatisticsScreen = () => {
         <Text style={[styles.title, { color: currentTheme.text }]}>{t.statistics}</Text>
         {Array.from({ length: 12 }, (_, i) => i + 1).map(number => renderNumberStats(number))}
       </ScrollView>
-
-      <Link href="/study" asChild>
-        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
-          <View style={styles.backButtonContent}>
-            <Ionicons name="arrow-back" size={24} color={currentTheme.buttonText} />
-            <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>
-              {t.backToStudy}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </Link>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingHorizontal: 16,
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  homeButton: {
+    padding: 10,
   },
   scrollView: {
     flex: 1,
-    padding: 16,
-    marginTop: 12,
+    paddingHorizontal: 16,
   },
   scrollViewContent: {
     paddingBottom: 20,
@@ -146,21 +147,6 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: 14,
     fontStyle: 'italic',
-  },
-  backButton: {
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 'auto',
-  },
-  backButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingVertical: 10,
-  },
-  backButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 

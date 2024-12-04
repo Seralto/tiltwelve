@@ -241,8 +241,9 @@ export default function QuizScreen() {
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <View style={styles.header}>
+        <View style={styles.headerLeft} />
         <Link href="/" asChild>
-          <TouchableOpacity>
+          <TouchableOpacity style={styles.homeButton}>
             <Ionicons name="home-outline" size={24} color={currentTheme.text} />
           </TouchableOpacity>
         </Link>
@@ -344,6 +345,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  homeButton: {
+    padding: 10,
   },
   scoreContainer: {
     alignItems: 'center',

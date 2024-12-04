@@ -24,6 +24,14 @@ export default function SettingsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <View style={styles.header}>
+        <View style={styles.headerLeft} />
+        <Link href="/" asChild>
+          <TouchableOpacity style={styles.homeButton}>
+            <Ionicons name="home-outline" size={24} color={currentTheme.text} />
+          </TouchableOpacity>
+        </Link>
+      </View>
       <Text style={[styles.title, { color: currentTheme.text }]}>{t.settings}</Text>
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>
@@ -107,17 +115,6 @@ export default function SettingsScreen() {
           </View>
         </TouchableOpacity>
       </Link>
-
-      <Link href="/study" asChild>
-        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
-          <View style={styles.backButtonContent}>
-            <Ionicons name="arrow-back" size={24} color={currentTheme.buttonText} />
-            <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>
-              {t.backToStudy}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </Link>
     </View>
   );
 }
@@ -125,7 +122,18 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  homeButton: {
+    padding: 10,
   },
   title: {
     fontSize: 24,
@@ -176,38 +184,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  aboutButton: {
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
   aboutButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
     marginBottom: 30,
-    marginTop: 10,
+    marginTop: 20,
     justifyContent: 'center',
     borderColor: '#666',
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
   },
-  aboutButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  backButton: {
+  aboutButton: {
     padding: 15,
     borderRadius: 10,
-    marginTop: 'auto',
+    marginBottom: 20,
   },
-  backButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  backButtonText: {
+  aboutButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
   },

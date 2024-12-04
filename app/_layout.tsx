@@ -1,13 +1,30 @@
-import { Stack } from 'expo-router';
-import { ThemeProvider } from './context/ThemeContext';
-import { LanguageProvider } from './context/LanguageContext';
+import { Stack, useRouter } from 'expo-router';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { StatisticsProvider } from './context/StatisticsContext';
+import { useEffect } from 'react';
+
+function InitialRedirect() {
+  const router = useRouter();
+  const { theme } = useTheme();
+  const { language } = useLanguage();
+
+  useEffect(() => {
+    // Check if theme and language are set
+    if (!theme || !language) {
+      router.replace('/settings');
+    }
+  }, [theme, language]);
+
+  return null;
+}
 
 export default function RootLayout() {
   return (
     <ThemeProvider>
       <LanguageProvider>
         <StatisticsProvider>
+          <InitialRedirect />
           <Stack>
             <Stack.Screen
               name="index"
