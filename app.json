@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FFFFFF"
+      "backgroundColor": "#5f617e"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -22,32 +22,21 @@
       "package": "com.sergiotoledo.tiltwelve",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#5f617e"
       },
       "permissions": []
     },
     "web": {
-      "bundler": "metro",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#FFFFFF"
-        }
-      ]
-    ],
     "description": "Learn multiplication tables in a fun and interactive way. Practice with input or multiple choice quizzes, track your progress, and master multiplication in multiple languages.",
     "primaryColor": "#4A90E2",
     "extra": {
       "eas": {
         "projectId": "9b9b6f11-b3db-4a61-8ee4-11ff0fc8cad9"
       }
-    }
+    },
+    "owner": "seralto"
   }
 }

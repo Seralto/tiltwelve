@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 32,
+    fontSize: 36 ,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 32,
