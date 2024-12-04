@@ -13,6 +13,13 @@ export default function QuizModeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <View style={styles.header}>
+        <Link href="/" asChild>
+          <TouchableOpacity>
+            <Ionicons name="home-outline" size={24} color={currentTheme.text} />
+          </TouchableOpacity>
+        </Link>
+      </View>
       <View style={styles.modesContainer}>
         <TouchableOpacity
           style={[styles.modeCard, { backgroundColor: currentTheme.card }]}

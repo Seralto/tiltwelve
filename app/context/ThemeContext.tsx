@@ -41,7 +41,7 @@ export const themes = {
     background: '#E2F0CB',
     card: '#FFFFFF',
     text: '#6B5876',
-    secondary: '#CB8CFF',
+    secondary: '#BC79F3',
     border: '#C7CEEA',
     buttonText: '#6B5876',
     error: '#FFB7B2',

@@ -10,6 +10,12 @@ export default function RootLayout() {
         <StatisticsProvider>
           <Stack>
             <Stack.Screen
+              name="index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
               name="study"
               options={{
                 title: 'TilTwelve',

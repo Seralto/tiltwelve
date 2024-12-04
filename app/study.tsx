@@ -131,14 +131,9 @@ const StudyScreen = () => {
               color={currentTheme.text} 
             />
           </TouchableOpacity>
-          <Link href="/statistics" asChild>
+          <Link href="/" asChild>
             <TouchableOpacity style={styles.iconButton}>
-              <Ionicons name="stats-chart" size={24} color={currentTheme.text} />
-            </TouchableOpacity>
-          </Link>
-          <Link href="/settings" asChild>
-            <TouchableOpacity style={styles.iconButton}>
-              <Ionicons name="settings-outline" size={24} color={currentTheme.text} />
+              <Ionicons name="home-outline" size={24} color={currentTheme.text} />
             </TouchableOpacity>
           </Link>
         </View>

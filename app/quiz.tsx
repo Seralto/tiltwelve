@@ -240,6 +240,13 @@ export default function QuizScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <View style={styles.header}>
+        <Link href="/" asChild>
+          <TouchableOpacity>
+            <Ionicons name="home-outline" size={24} color={currentTheme.text} />
+          </TouchableOpacity>
+        </Link>
+      </View>
       <Text style={[styles.title, { color: currentTheme.text }]}>
         {t.quizTitle}
       </Text>
