@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme, themes } from "./contexts/ThemeContext";
 import { useLanguage } from "./contexts/LanguageContext";
-import { useNavigation } from "@react-navigation/native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -10,20 +9,24 @@ const CompetitionScreen = () => {
   const { theme } = useTheme();
   const currentTheme = themes[theme];
   const { t } = useLanguage();
-  const navigation = useNavigation();
 
   const [player1Score, setPlayer1Score] = useState(0);
   const [player2Score, setPlayer2Score] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState({ num1: 8, num2: 4 });
   const [options, setOptions] = useState([32, 28, 21, 36]);
-  const [currentPlayer, setCurrentPlayer] = useState(1);
   const [gameStarted, setGameStarted] = useState(false);
-  const [questionsAsked, setQuestionsAsked] = useState(0);
+  const [isProcessingAnswer, setIsProcessingAnswer] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [currentPlayer, setCurrentPlayer] = useState<number | null>(null);
   const maxQuestions = 10;
+  const [feedback, setFeedback] = useState<{
+    message: string;
+    player: number | null;
+  }>({ message: "", player: null });
 
   const generateNewQuestion = () => {
     const num1 = Math.floor(Math.random() * 12) + 1;
-    const num2 = Math.floor(Math.random() * 12) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
     setCurrentQuestion({ num1, num2 });
     const correctAnswer = num1 * num2;
     const newOptions = [correctAnswer];
@@ -36,60 +39,130 @@ const CompetitionScreen = () => {
     setOptions(newOptions.sort(() => Math.random() - 0.5));
   };
 
-  const handleAnswer = (answer: number) => {
+  const handleAnswer = async (answer: number, player: number) => {
+    if (isProcessingAnswer || selectedOption !== null) return;
+    setIsProcessingAnswer(true);
+    setSelectedOption(answer);
+    setCurrentPlayer(player);
+
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
     if (answer === correctAnswer) {
-      if (currentPlayer === 1) {
+      if (player === 1) {
         setPlayer1Score((prevScore) => prevScore + 1);
       } else {
         setPlayer2Score((prevScore) => prevScore + 1);
       }
+      setFeedback({ message: t.correct, player });
     } else {
-      if (currentPlayer === 1) {
+      if (player === 1) {
         setPlayer2Score((prevScore) => prevScore + 1);
       } else {
         setPlayer1Score((prevScore) => prevScore + 1);
       }
+      setFeedback({ message: `${t.incorrect} ${correctAnswer}`, player });
     }
-    setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? 2 : 1));
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setFeedback({ message: "", player: null });
+    setSelectedOption(null);
+    setCurrentPlayer(null);
     generateNewQuestion();
-    setQuestionsAsked((prev) => prev + 1);
+    setIsProcessingAnswer(false);
   };
 
   useEffect(() => {
     generateNewQuestion();
   }, []);
 
+  const endGame = () => {
+    return (
+      (player1Score == maxQuestions || player2Score == maxQuestions) &&
+      feedback.message === "" &&
+      !isProcessingAnswer
+    );
+  };
+
+  // Start screen
   if (!gameStarted) {
     return (
-      <View style={styles.container}>
+      <View
+        style={[styles.container, { backgroundColor: currentTheme.background }]}
+      >
         <TouchableOpacity
-          style={styles.startButton}
+          style={[
+            styles.startButton,
+            { backgroundColor: currentTheme.primary },
+          ]}
           onPress={() => setGameStarted(true)}
         >
-          <Text style={styles.startButtonText}>{t.startGame}</Text>
+          <Text
+            style={[styles.startButtonText, { color: currentTheme.background }]}
+          >
+            {t.startGame}
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  if (questionsAsked >= maxQuestions) {
+  // Final screen
+  if (endGame()) {
     const winner = player1Score > player2Score ? t.player1 : t.player2;
     return (
-      <View style={styles.container}>
-        <Text style={styles.finalScore}>{t.finalScore}</Text>
-        <Text style={styles.winner}>{t.winner}: {winner}</Text>
-        <TouchableOpacity
-          style={styles.startButton}
-          onPress={() => {
-            setGameStarted(false);
-            setPlayer1Score(0);
-            setPlayer2Score(0);
-            setQuestionsAsked(0);
-          }}
-        >
-          <Text style={styles.startButtonText}>{t.playAgain}</Text>
-        </TouchableOpacity>
+      <View
+        style={[styles.container, { backgroundColor: currentTheme.background }]}
+      >
+        <View style={styles.finalScoreContainerVertical}>
+          <View style={[styles.playerFinalContainer, styles.player1Flipped]}>
+            <Text
+              style={[
+                styles.finalScoreText,
+                {
+                  fontSize: winner === t.player1 ? 92 : 60,
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              {winner === t.player1 ? "🏆" : "😞"}
+            </Text>
+            <Text style={[styles.finalScoreText, { color: currentTheme.text }]}>
+              {player1Score} / {maxQuestions}
+            </Text>
+          </View>
+          <View style={styles.finalActionsContainerCentered}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => {
+                setGameStarted(false);
+                setPlayer1Score(0);
+                setPlayer2Score(0);
+              }}
+            >
+              <Ionicons name="refresh" size={60} color={currentTheme.text} />
+            </TouchableOpacity>
+            <Link href="/" asChild>
+              <TouchableOpacity style={styles.iconButton}>
+                <Ionicons name="menu" size={60} color={currentTheme.text} />
+              </TouchableOpacity>
+            </Link>
+          </View>
+          <View style={styles.playerFinalContainer}>
+            <Text
+              style={[
+                styles.finalScoreText,
+                {
+                  fontSize: winner === t.player2 ? 92 : 60,
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              {winner === t.player2 ? "🏆" : "😞"}
+            </Text>
+            <Text style={[styles.finalScoreText, { color: currentTheme.text }]}>
+              {player2Score} / {maxQuestions}
+            </Text>
+          </View>
+        </View>
       </View>
     );
   }
@@ -106,16 +179,32 @@ const CompetitionScreen = () => {
           </TouchableOpacity>
         </Link>
       </View>
-      <View style={[styles.playerContainer, { flexDirection: "column" }]}>
-        <View
-          style={[
-            styles.playerSide,
-            styles.player1Side,
-            { backgroundColor: currentTheme.card },
-          ]}
-        >
+
+      {feedback.message && (
+        <View style={styles.feedbackContainer}>
+          <Text
+            style={[
+              styles.feedbackText,
+              {
+                backgroundColor:
+                  feedback.message === t.correct
+                    ? currentTheme.success
+                    : currentTheme.error,
+                color: currentTheme.text,
+              },
+              currentPlayer === 1 && styles.feedbackTextFlipped,
+            ]}
+          >
+            {feedback.message}
+          </Text>
+        </View>
+      )}
+
+      <View style={styles.boardContainer}>
+        {/* Player 1 */}
+        <View style={[styles.playerSide, styles.player1Side]}>
           <Text style={[styles.score, { color: currentTheme.text }]}>
-            {t.player1}: {player1Score}
+            {t.player1}: {player1Score}/{maxQuestions}
           </Text>
           <Text style={[styles.question, { color: currentTheme.text }]}>
             {currentQuestion.num1} × {currentQuestion.num2} = ?
@@ -126,9 +215,17 @@ const CompetitionScreen = () => {
                 <TouchableOpacity
                   style={[
                     styles.optionButton,
-                    { backgroundColor: currentTheme.card },
+                    {
+                      backgroundColor:
+                        selectedOption === option && currentPlayer === 1
+                          ? option ===
+                            currentQuestion.num1 * currentQuestion.num2
+                            ? currentTheme.success
+                            : currentTheme.error
+                          : currentTheme.card,
+                    },
                   ]}
-                  onPress={() => handleAnswer(option)}
+                  onPress={() => handleAnswer(option, 1)}
                 >
                   <Text
                     style={[styles.optionText, { color: currentTheme.text }]}
@@ -140,15 +237,11 @@ const CompetitionScreen = () => {
             ))}
           </View>
         </View>
-        <View
-          style={[
-            styles.playerSide,
-            styles.player2Side,
-            { backgroundColor: currentTheme.card },
-          ]}
-        >
+
+        {/* Player 2 */}
+        <View style={[styles.playerSide, styles.player2Side]}>
           <Text style={[styles.score, { color: currentTheme.text }]}>
-            {t.player2}: {player2Score}
+            {t.player2}: {player2Score}/{maxQuestions}
           </Text>
           <Text style={[styles.question, { color: currentTheme.text }]}>
             {currentQuestion.num1} × {currentQuestion.num2} = ?
@@ -159,9 +252,17 @@ const CompetitionScreen = () => {
                 <TouchableOpacity
                   style={[
                     styles.optionButton,
-                    { backgroundColor: currentTheme.card },
+                    {
+                      backgroundColor:
+                        selectedOption === option && currentPlayer === 2
+                          ? option ===
+                            currentQuestion.num1 * currentQuestion.num2
+                            ? currentTheme.success
+                            : currentTheme.error
+                          : currentTheme.card,
+                    },
                   ]}
-                  onPress={() => handleAnswer(option)}
+                  onPress={() => handleAnswer(option, 2)}
                 >
                   <Text
                     style={[styles.optionText, { color: currentTheme.text }]}
@@ -183,7 +284,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: "row",
@@ -193,10 +295,10 @@ const styles = StyleSheet.create({
   headerLeft: {
     flex: 1,
   },
-  playerContainer: {
+  boardContainer: {
     justifyContent: "space-between",
     width: "100%",
-    height: "100%",
+    height: "95%",
   },
   playerSide: {
     flex: 1,
@@ -262,15 +364,59 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  finalScore: {
+  finalScoreContainerVertical: {
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  playerFinalContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  player1Flipped: {
+    transform: [{ rotate: "180deg" }],
+  },
+  finalScoreText: {
+    fontSize: 36,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  finalActionsContainerCentered: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  iconButton: {
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  feedbackContainer: {
+    position: "absolute",
+    top: "50%",
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    transform: [{ translateY: -12 }],
+  },
+  feedbackText: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    textAlign: "center",
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: "#4CAF50",
+    color: "#fff",
+    width: "80%",
   },
-  winner: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
+  feedbackTextFlipped: {
+    transform: [{ rotate: "180deg" }],
   },
 });
 
