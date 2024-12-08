@@ -187,3 +187,5 @@ export function useLanguage() {
     t: translations[context.language],
   };
 }
+
+export default LanguageProvider;

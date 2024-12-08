@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const STATISTICS_KEY = '@tiltwelve:statistics';
+const STATISTICS_KEY = "@tiltwelve:statistics";
 
 interface EquationStat {
   correct: number;
@@ -22,9 +22,15 @@ interface StatisticsContextType {
   getPercentage: (num1: number, num2: number) => number;
 }
 
-const StatisticsContext = createContext<StatisticsContextType | undefined>(undefined);
+const StatisticsContext = createContext<StatisticsContextType | undefined>(
+  undefined
+);
 
-export function StatisticsProvider({ children }: { children: React.ReactNode }) {
+export function StatisticsProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [statistics, setStatistics] = useState<Statistics>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,7 +47,7 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
       }
       setIsLoading(false);
     } catch (error) {
-      console.error('Error loading statistics:', error);
+      console.error("Error loading statistics:", error);
       setIsLoading(false);
     }
   };
@@ -50,34 +56,34 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
     try {
       await AsyncStorage.setItem(STATISTICS_KEY, JSON.stringify(newStats));
     } catch (error) {
-      console.error('Error saving statistics:', error);
+      console.error("Error saving statistics:", error);
     }
   };
 
   const addAttempt = async (num1: number, num2: number, isCorrect: boolean) => {
-    setStatistics(prev => {
+    setStatistics((prev) => {
       // Create a deep copy of the previous state
       const newStats = JSON.parse(JSON.stringify(prev));
-      
+
       // Initialize objects if they don't exist
       if (!newStats[num1]) {
         newStats[num1] = {};
       }
-      
+
       const key = `${num1}x${num2}`;
       if (!newStats[num1][key]) {
         newStats[num1][key] = { correct: 0, total: 0 };
       }
-      
+
       // Update statistics
       newStats[num1][key].total += 1;
       if (isCorrect) {
         newStats[num1][key].correct += 1;
       }
-      
+
       // Save to AsyncStorage
       saveStatistics(newStats);
-      
+
       return newStats;
     });
   };
@@ -93,7 +99,9 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <StatisticsContext.Provider value={{ statistics, addAttempt, getPercentage }}>
+    <StatisticsContext.Provider
+      value={{ statistics, addAttempt, getPercentage }}
+    >
       {children}
     </StatisticsContext.Provider>
   );
@@ -102,7 +110,9 @@ export function StatisticsProvider({ children }: { children: React.ReactNode }) 
 export function useStatistics() {
   const context = useContext(StatisticsContext);
   if (context === undefined) {
-    throw new Error('useStatistics must be used within a StatisticsProvider');
+    throw new Error("useStatistics must be used within a StatisticsProvider");
   }
   return context;
 }
+
+export default StatisticsProvider;

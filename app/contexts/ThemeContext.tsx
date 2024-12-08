@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import LoadingScreen from '../components/LoadingScreen';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LoadingScreen from "../components/LoadingScreen";
 
-export type Theme = 'light' | 'dark' | 'kids';
+export type Theme = "light" | "dark" | "kids";
 
 interface ThemeContextType {
   theme: Theme;
@@ -11,46 +11,46 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = '@tiltwelve:theme';
+const THEME_STORAGE_KEY = "@tiltwelve:theme";
 
 export const themes = {
   light: {
-    primary: '#007AFF',
-    background: '#f5f5f5',
-    card: '#ffffff',
-    text: '#333333',
-    secondary: '#666666',
-    border: '#eeeeee',
-    buttonText: '#333333', 
-    error: '#FF3B30',
-    success: '#34C759',
+    primary: "#007AFF",
+    background: "#f5f5f5",
+    card: "#ffffff",
+    text: "#333333",
+    secondary: "#666666",
+    border: "#eeeeee",
+    buttonText: "#333333",
+    error: "#FF3B30",
+    success: "#34C759",
   },
   dark: {
-    primary: '#0A84FF',
-    background: '#2C2C2E',
-    card: '#3A3A3C',
-    text: '#E5E5E7',
-    secondary: '#999999',
-    border: '#48484A',
-    buttonText: '#FFFFFF', 
-    error: '#FF453A',
-    success: '#32D74B',
+    primary: "#0A84FF",
+    background: "#2C2C2E",
+    card: "#3A3A3C",
+    text: "#E5E5E7",
+    secondary: "#999999",
+    border: "#48484A",
+    buttonText: "#FFFFFF",
+    error: "#FF453A",
+    success: "#32D74B",
   },
   kids: {
-    primary: '#CB8CFF',
-    background: '#E2F0CB',
-    card: '#FFFFFF',
-    text: '#6B5876',
-    secondary: '#BC79F3',
-    border: '#C7CEEA',
-    buttonText: '#6B5876',
-    error: '#FFB7B2',
-    success: '#B5EAD7',
-  }
+    primary: "#CB8CFF",
+    background: "#E2F0CB",
+    card: "#FFFFFF",
+    text: "#6B5876",
+    secondary: "#BC79F3",
+    border: "#C7CEEA",
+    buttonText: "#6B5876",
+    error: "#FFB7B2",
+    success: "#B5EAD7",
+  },
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>("light");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -60,11 +60,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const loadTheme = async () => {
     try {
       const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-      if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'kids')) {
+      if (
+        savedTheme &&
+        (savedTheme === "light" ||
+          savedTheme === "dark" ||
+          savedTheme === "kids")
+      ) {
         setTheme(savedTheme as Theme);
       }
     } catch (error) {
-      console.error('Error loading theme:', error);
+      console.error("Error loading theme:", error);
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +80,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
     } catch (error) {
-      console.error('Error saving theme:', error);
+      console.error("Error saving theme:", error);
     }
   };
 
@@ -93,7 +98,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 }
+
+export default ThemeProvider;
