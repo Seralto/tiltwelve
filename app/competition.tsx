@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme, themes } from "./contexts/ThemeContext";
 import { useLanguage } from "./contexts/LanguageContext";
-import { useNavigation } from "@react-navigation/native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -10,7 +9,6 @@ const CompetitionScreen = () => {
   const { theme } = useTheme();
   const currentTheme = themes[theme];
   const { t } = useLanguage();
-  const navigation = useNavigation();
 
   const [player1Score, setPlayer1Score] = useState(0);
   const [player2Score, setPlayer2Score] = useState(0);
@@ -36,22 +34,22 @@ const CompetitionScreen = () => {
     setOptions(newOptions.sort(() => Math.random() - 0.5));
   };
 
-  const handleAnswer = (answer: number) => {
+  const handleAnswer = (answer: number, player: number) => {
     const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
     if (answer === correctAnswer) {
-      if (currentPlayer === 1) {
+      if (player === 1) {
         setPlayer1Score((prevScore) => prevScore + 1);
       } else {
         setPlayer2Score((prevScore) => prevScore + 1);
       }
     } else {
-      if (currentPlayer === 1) {
+      if (player === 1) {
         setPlayer2Score((prevScore) => prevScore + 1);
       } else {
         setPlayer1Score((prevScore) => prevScore + 1);
       }
     }
-    setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? 2 : 1));
+    // setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? 2 : 1));
     generateNewQuestion();
     setQuestionsAsked((prev) => prev + 1);
   };
@@ -62,12 +60,21 @@ const CompetitionScreen = () => {
 
   if (!gameStarted) {
     return (
-      <View style={styles.container}>
+      <View
+        style={[styles.container, { backgroundColor: currentTheme.background }]}
+      >
         <TouchableOpacity
-          style={styles.startButton}
+          style={[
+            styles.startButton,
+            { backgroundColor: currentTheme.primary },
+          ]}
           onPress={() => setGameStarted(true)}
         >
-          <Text style={styles.startButtonText}>{t.startGame}</Text>
+          <Text
+            style={[styles.startButtonText, { color: currentTheme.background }]}
+          >
+            {t.startGame}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -78,9 +85,15 @@ const CompetitionScreen = () => {
     return (
       <View style={styles.container}>
         <Text style={styles.finalScore}>{t.finalScore}</Text>
-        <Text style={styles.winner}>{t.winner}: {winner}</Text>
+        <Text style={styles.winner}>
+          {t.winner}: {winner}{" "}
+          <Text style={{ fontSize: 24, fontWeight: "bold" }}>🎉</Text>
+        </Text>
         <TouchableOpacity
-          style={styles.startButton}
+          style={[
+            styles.startButton,
+            { backgroundColor: currentTheme.primary },
+          ]}
           onPress={() => {
             setGameStarted(false);
             setPlayer1Score(0);
@@ -88,7 +101,11 @@ const CompetitionScreen = () => {
             setQuestionsAsked(0);
           }}
         >
-          <Text style={styles.startButtonText}>{t.playAgain}</Text>
+          <Text
+            style={[styles.startButtonText, { color: currentTheme.background }]}
+          >
+            {t.playAgain}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -106,7 +123,9 @@ const CompetitionScreen = () => {
           </TouchableOpacity>
         </Link>
       </View>
+
       <View style={[styles.playerContainer, { flexDirection: "column" }]}>
+        {/* Player 1 */}
         <View
           style={[
             styles.playerSide,
@@ -115,7 +134,7 @@ const CompetitionScreen = () => {
           ]}
         >
           <Text style={[styles.score, { color: currentTheme.text }]}>
-            {t.player1}: {player1Score}
+            {t.score}: {player1Score}
           </Text>
           <Text style={[styles.question, { color: currentTheme.text }]}>
             {currentQuestion.num1} × {currentQuestion.num2} = ?
@@ -128,7 +147,7 @@ const CompetitionScreen = () => {
                     styles.optionButton,
                     { backgroundColor: currentTheme.card },
                   ]}
-                  onPress={() => handleAnswer(option)}
+                  onPress={() => handleAnswer(option, 1)}
                 >
                   <Text
                     style={[styles.optionText, { color: currentTheme.text }]}
@@ -140,6 +159,8 @@ const CompetitionScreen = () => {
             ))}
           </View>
         </View>
+
+        {/* Player 2 */}
         <View
           style={[
             styles.playerSide,
@@ -148,7 +169,7 @@ const CompetitionScreen = () => {
           ]}
         >
           <Text style={[styles.score, { color: currentTheme.text }]}>
-            {t.player2}: {player2Score}
+            {t.score}: {player2Score}
           </Text>
           <Text style={[styles.question, { color: currentTheme.text }]}>
             {currentQuestion.num1} × {currentQuestion.num2} = ?
@@ -161,7 +182,7 @@ const CompetitionScreen = () => {
                     styles.optionButton,
                     { backgroundColor: currentTheme.card },
                   ]}
-                  onPress={() => handleAnswer(option)}
+                  onPress={() => handleAnswer(option, 2)}
                 >
                   <Text
                     style={[styles.optionText, { color: currentTheme.text }]}
@@ -183,7 +204,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: "row",
@@ -196,7 +218,7 @@ const styles = StyleSheet.create({
   playerContainer: {
     justifyContent: "space-between",
     width: "100%",
-    height: "100%",
+    height: "95%",
   },
   playerSide: {
     flex: 1,
@@ -263,7 +285,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   finalScore: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
     marginBottom: 10,
   },
