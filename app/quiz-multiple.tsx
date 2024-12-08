@@ -1,23 +1,34 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView } from 'react-native';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
-import { useTheme, themes } from './context/ThemeContext';
-import { useLanguage } from './context/LanguageContext';
-import { useStatistics } from './context/StatisticsContext';
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  ScrollView,
+} from "react-native";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { useTheme, themes } from "./contexts/ThemeContext";
+import { useLanguage } from "./contexts/LanguageContext";
+import { useStatistics } from "./contexts/StatisticsContext";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function MultipleChoiceQuizScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
-  const [selectedTable, setSelectedTable] = useState<number | null>(params.table ? parseInt(params.table as string) : null);
+  const [selectedTable, setSelectedTable] = useState<number | null>(
+    params.table ? parseInt(params.table as string) : null
+  );
   const [usedQuestions, setUsedQuestions] = useState<Set<string>>(new Set());
-  const [currentQuestion, setCurrentQuestion] = useState(() => generateQuestion(selectedTable, usedQuestions, setUsedQuestions));
+  const [currentQuestion, setCurrentQuestion] = useState(() =>
+    generateQuestion(selectedTable, usedQuestions, setUsedQuestions)
+  );
   const [options, setOptions] = useState<number[]>([]);
   const [highScore, setHighScore] = useState(0);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState("");
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [buttonScales] = useState(Array(6).fill(new Animated.Value(1))); 
+  const [buttonScales] = useState(Array(6).fill(new Animated.Value(1)));
   const [isProcessingAnswer, setIsProcessingAnswer] = useState(false);
   const { theme } = useTheme();
   const { t } = useLanguage();
@@ -42,7 +53,7 @@ export default function MultipleChoiceQuizScreen() {
       } else {
         num1 = Math.floor(Math.random() * 12) + 1; // Tables go from 1-12
       }
-      num2 = Math.floor(Math.random() * 10) + 1;  // Multiplier goes from 1-10
+      num2 = Math.floor(Math.random() * 10) + 1; // Multiplier goes from 1-10
       questionKey = `${num1}x${num2}`;
       attempts++;
     } while (used.has(questionKey) && attempts < maxAttempts);
@@ -51,7 +62,7 @@ export default function MultipleChoiceQuizScreen() {
     if (attempts >= maxAttempts) {
       setUsed(new Set());
     } else {
-      setUsed(prev => new Set(prev).add(questionKey));
+      setUsed((prev) => new Set(prev).add(questionKey));
     }
 
     return { num1, num2 };
@@ -65,10 +76,14 @@ export default function MultipleChoiceQuizScreen() {
 
   // Generate new question
   const generateNewQuestion = useCallback(() => {
-    const newQuestion = generateQuestion(selectedTable, usedQuestions, setUsedQuestions);
+    const newQuestion = generateQuestion(
+      selectedTable,
+      usedQuestions,
+      setUsedQuestions
+    );
     setCurrentQuestion(newQuestion);
     setOptions(generateOptions(newQuestion.num1 * newQuestion.num2));
-    setFeedback('');
+    setFeedback("");
     setSelectedAnswer(null);
   }, [selectedTable, usedQuestions]);
 
@@ -77,7 +92,10 @@ export default function MultipleChoiceQuizScreen() {
     options.add(correctAnswer);
 
     while (options.size < 6) {
-      const wrong = Math.max(1, correctAnswer + (Math.floor(Math.random() * 21) - 10));
+      const wrong = Math.max(
+        1,
+        correctAnswer + (Math.floor(Math.random() * 21) - 10)
+      );
       if (wrong !== correctAnswer) {
         options.add(wrong);
       }
@@ -91,78 +109,88 @@ export default function MultipleChoiceQuizScreen() {
     generateNewQuestion();
   }, [selectedTable]);
 
-  const handleAnswer = useCallback(async (answer: number, index: number) => {
-    if (selectedAnswer !== null || isProcessingAnswer) return;
-    
-    setIsProcessingAnswer(true);
-    setSelectedAnswer(answer);
+  const handleAnswer = useCallback(
+    async (answer: number, index: number) => {
+      if (selectedAnswer !== null || isProcessingAnswer) return;
 
-    const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
-    const isCorrect = answer === correctAnswer;
+      setIsProcessingAnswer(true);
+      setSelectedAnswer(answer);
 
-    addAttempt(currentQuestion.num1, currentQuestion.num2, isCorrect);
+      const correctAnswer = currentQuestion.num1 * currentQuestion.num2;
+      const isCorrect = answer === correctAnswer;
 
-    if (isCorrect) {
-      setFeedback(t.correct);
-      // Get the table number from the current question
-      const tableNumber = currentQuestion.num1;
-      const key = `table_${tableNumber}_score`;
-      
-      // Load current score for this table
-      const savedScore = await AsyncStorage.getItem(key);
-      const currentTableScore = savedScore ? parseInt(savedScore) : 0;
-      const newScore = currentTableScore + 1;
-      
-      // Save new score
-      await AsyncStorage.setItem(key, newScore.toString());
-      
-      // If we're in a specific table view, update the displayed score
-      if (selectedTable === tableNumber) {
-        setHighScore(newScore);
-      } else if (!selectedTable) {
-        // In "All" mode, reload the total score
-        let totalScore = 0;
-        for (let table = 1; table <= 12; table++) {
-          const tableKey = `table_${table}_score`;
-          const tableScore = await AsyncStorage.getItem(tableKey);
-          if (tableScore) {
-            totalScore += parseInt(tableScore);
+      addAttempt(currentQuestion.num1, currentQuestion.num2, isCorrect);
+
+      if (isCorrect) {
+        setFeedback(t.correct);
+        // Get the table number from the current question
+        const tableNumber = currentQuestion.num1;
+        const key = `table_${tableNumber}_score`;
+
+        // Load current score for this table
+        const savedScore = await AsyncStorage.getItem(key);
+        const currentTableScore = savedScore ? parseInt(savedScore) : 0;
+        const newScore = currentTableScore + 1;
+
+        // Save new score
+        await AsyncStorage.setItem(key, newScore.toString());
+
+        // If we're in a specific table view, update the displayed score
+        if (selectedTable === tableNumber) {
+          setHighScore(newScore);
+        } else if (!selectedTable) {
+          // In "All" mode, reload the total score
+          let totalScore = 0;
+          for (let table = 1; table <= 12; table++) {
+            const tableKey = `table_${table}_score`;
+            const tableScore = await AsyncStorage.getItem(tableKey);
+            if (tableScore) {
+              totalScore += parseInt(tableScore);
+            }
           }
+          setHighScore(totalScore);
         }
-        setHighScore(totalScore);
+      } else {
+        setFeedback(`${t.incorrect} ${correctAnswer}`);
       }
-    } else {
-      setFeedback(`${t.incorrect} ${correctAnswer}`);
-    }
 
-    // Animate the selected button
-    Animated.sequence([
-      Animated.spring(buttonScales[index], {
-        toValue: 0.95,
-        useNativeDriver: true,
-      }),
-      Animated.spring(buttonScales[index], {
-        toValue: 1,
-        useNativeDriver: true,
-      }),
-    ]).start();
+      // Animate the selected button
+      Animated.sequence([
+        Animated.spring(buttonScales[index], {
+          toValue: 0.95,
+          useNativeDriver: true,
+        }),
+        Animated.spring(buttonScales[index], {
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+      ]).start();
 
-    setTimeout(() => {
-      setSelectedAnswer(null);
-      setFeedback('');
-      setIsProcessingAnswer(false);
-      generateNewQuestion();
-    }, 2000);
-  }, [currentQuestion, selectedAnswer, isProcessingAnswer, buttonScales, t, selectedTable]);
+      setTimeout(() => {
+        setSelectedAnswer(null);
+        setFeedback("");
+        setIsProcessingAnswer(false);
+        generateNewQuestion();
+      }, 2000);
+    },
+    [
+      currentQuestion,
+      selectedAnswer,
+      isProcessingAnswer,
+      buttonScales,
+      t,
+      selectedTable,
+    ]
+  );
 
   const renderTableSelection = () => {
     return (
       <View style={styles.tableSelector}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.allTablesButton, 
+            styles.allTablesButton,
             !selectedTable && { backgroundColor: currentTheme.primary },
-            { borderColor: currentTheme.primary }
+            { borderColor: currentTheme.primary },
           ]}
           onPress={() => {
             setSelectedTable(null);
@@ -170,32 +198,36 @@ export default function MultipleChoiceQuizScreen() {
             generateNewQuestion();
           }}
         >
-          <Text style={[
-            styles.allTablesText, 
-            { color: currentTheme.text },
-            !selectedTable && { color: currentTheme.background }
-          ]}>
+          <Text
+            style={[
+              styles.allTablesText,
+              { color: currentTheme.text },
+              !selectedTable && { color: currentTheme.background },
+            ]}
+          >
             {t.allTables}
           </Text>
         </TouchableOpacity>
         <View style={styles.numbersContainer}>
-          {Array.from({ length: 12 }, (_, i) => i + 1).map(num => (
+          {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
             <TouchableOpacity
               key={num}
               style={[
                 styles.numberButton,
-                selectedTable === num && { backgroundColor: currentTheme.primary },
+                selectedTable === num && {
+                  backgroundColor: currentTheme.primary,
+                },
               ]}
               onPress={() => {
                 setSelectedTable(num);
                 router.setParams({ table: num.toString() });
               }}
             >
-              <Text 
+              <Text
                 style={[
-                  styles.numberText, 
+                  styles.numberText,
                   { color: currentTheme.text },
-                  selectedTable === num && { color: currentTheme.background }
+                  selectedTable === num && { color: currentTheme.background },
                 ]}
               >
                 {num}
@@ -228,7 +260,7 @@ export default function MultipleChoiceQuizScreen() {
           setHighScore(totalScore);
         }
       } catch (error) {
-        console.error('Error loading score:', error);
+        console.error("Error loading score:", error);
       }
     };
     loadHighScore();
@@ -242,14 +274,16 @@ export default function MultipleChoiceQuizScreen() {
         const key = `table_${selectedTable}_score`;
         await AsyncStorage.setItem(key, highScore.toString());
       } catch (error) {
-        console.error('Error saving score:', error);
+        console.error("Error saving score:", error);
       }
     };
     saveHighScore();
   }, [highScore, selectedTable]);
 
   return (
-    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: currentTheme.background }]}
+    >
       <View style={styles.header}>
         <View style={styles.headerLeft} />
         <Link href="/" asChild>
@@ -266,13 +300,19 @@ export default function MultipleChoiceQuizScreen() {
 
       <View style={styles.scoreContainer}>
         <Text style={[styles.scoreText, { color: currentTheme.secondary }]}>
-          {selectedTable 
-            ? t.tableScore.replace('{{table}}', selectedTable.toString())
-            : t.globalScore}: {highScore}
+          {selectedTable
+            ? t.tableScore.replace("{{table}}", selectedTable.toString())
+            : t.globalScore}
+          : {highScore}
         </Text>
       </View>
 
-      <View style={[styles.questionContainer, { backgroundColor: currentTheme.card }]}>
+      <View
+        style={[
+          styles.questionContainer,
+          { backgroundColor: currentTheme.card },
+        ]}
+      >
         <Text style={[styles.questionText, { color: currentTheme.text }]}>
           {currentQuestion.num1} × {currentQuestion.num2} = ?
         </Text>
@@ -308,22 +348,43 @@ export default function MultipleChoiceQuizScreen() {
       </View>
 
       {feedback ? (
-        <Text style={[
-          styles.feedback,
-          feedback.includes('🎉') ? styles.correctFeedback : styles.incorrectFeedback
-        ]}>
+        <Text
+          style={[
+            styles.feedback,
+            feedback.includes("🎉")
+              ? styles.correctFeedback
+              : styles.incorrectFeedback,
+          ]}
+        >
           {feedback}
         </Text>
       ) : null}
 
-      <Link href={{
-        pathname: '/quiz',
-        params: { table: selectedTable?.toString() }
-      }} asChild>
-        <TouchableOpacity style={[styles.toggleButton, { backgroundColor: currentTheme.secondary }]}>
+      <Link
+        href={{
+          pathname: "/quiz",
+          params: { table: selectedTable?.toString() },
+        }}
+        asChild
+      >
+        <TouchableOpacity
+          style={[
+            styles.toggleButton,
+            { backgroundColor: currentTheme.secondary },
+          ]}
+        >
           <View style={styles.toggleButtonContent}>
-            <Ionicons name="keypad-outline" size={24} color={currentTheme.buttonText} />
-            <Text style={[styles.toggleButtonText, { color: currentTheme.buttonText }]}>
+            <Ionicons
+              name="keypad-outline"
+              size={24}
+              color={currentTheme.buttonText}
+            />
+            <Text
+              style={[
+                styles.toggleButtonText,
+                { color: currentTheme.buttonText },
+              ]}
+            >
               {t.switchToInput}
             </Text>
           </View>
@@ -331,10 +392,24 @@ export default function MultipleChoiceQuizScreen() {
       </Link>
 
       <Link href="/study" asChild>
-        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
+        <TouchableOpacity
+          style={[
+            styles.backButton,
+            { backgroundColor: currentTheme.secondary },
+          ]}
+        >
           <View style={styles.backButtonContent}>
-            <Ionicons name="arrow-back" size={24} color={currentTheme.buttonText} />
-            <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={currentTheme.buttonText}
+            />
+            <Text
+              style={[
+                styles.backButtonText,
+                { color: currentTheme.buttonText },
+              ]}
+            >
               {t.backToStudy}
             </Text>
           </View>
@@ -350,9 +425,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   headerLeft: {
@@ -362,29 +437,29 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   backButtonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   scoreContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   scoreText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   highScoreText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   questionContainer: {
     padding: 16,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -395,29 +470,29 @@ const styles = StyleSheet.create({
   },
   questionText: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   chooseText: {
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
   },
   optionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     gap: 15,
     marginBottom: 20,
   },
   optionWrapper: {
-    width: '48%',
+    width: "48%",
   },
   optionButton: {
     padding: 16,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -428,22 +503,22 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   feedback: {
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
     padding: 10,
     borderRadius: 10,
   },
   correctFeedback: {
-    backgroundColor: '#4CAF50',
-    color: '#fff',
+    backgroundColor: "#4CAF50",
+    color: "#fff",
   },
   incorrectFeedback: {
-    backgroundColor: '#f44336',
-    color: '#fff',
+    backgroundColor: "#f44336",
+    color: "#fff",
   },
   tableSelector: {
     marginBottom: 20,
@@ -454,42 +529,42 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 8,
     borderWidth: 2,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginBottom: 8,
   },
   allTablesText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   numbersContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   numberButton: {
     paddingVertical: 6,
-    width: '16%',
-    alignItems: 'center',
+    width: "16%",
+    alignItems: "center",
     marginVertical: 2,
     borderRadius: 6,
   },
   numberText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   backButton: {
     padding: 15,
     borderRadius: 10,
-    marginTop: 'auto',
+    marginTop: "auto",
   },
   backButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 5,
   },
   backButtonText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   toggleButton: {
     padding: 15,
@@ -497,10 +572,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   toggleButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderColor: '#666',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: "#666",
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 20,
@@ -510,12 +585,12 @@ const styles = StyleSheet.create({
   },
   toggleButtonText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

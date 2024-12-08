@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Link, useRouter } from 'expo-router';
-import { useTheme, themes } from './context/ThemeContext';
-import { useLanguage } from './context/LanguageContext';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Link, useRouter } from "expo-router";
+import { useTheme, themes } from "./contexts/ThemeContext";
+import { useLanguage } from "./contexts/LanguageContext";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function QuizModeScreen() {
   const { theme } = useTheme();
@@ -12,7 +12,9 @@ export default function QuizModeScreen() {
   const router = useRouter();
 
   return (
-    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: currentTheme.background }]}
+    >
       <View style={styles.header}>
         <View style={styles.headerLeft} />
         <Link href="/" asChild>
@@ -24,36 +26,66 @@ export default function QuizModeScreen() {
       <View style={styles.modesContainer}>
         <TouchableOpacity
           style={[styles.modeCard, { backgroundColor: currentTheme.card }]}
-          onPress={() => router.push('/quiz')}
+          onPress={() => router.push("/quiz")}
         >
           <View style={styles.modeIconContainer}>
-            <Ionicons name="keypad-outline" size={48} color={currentTheme.buttonText} />
+            <Ionicons
+              name="keypad-outline"
+              size={48}
+              color={currentTheme.buttonText}
+            />
           </View>
-          <Text style={[styles.modeTitle, { color: currentTheme.buttonText }]}>{t.inputMode}</Text>
-          <Text style={[styles.modeDescription, { color: currentTheme.buttonText }]}>
+          <Text style={[styles.modeTitle, { color: currentTheme.buttonText }]}>
+            {t.inputMode}
+          </Text>
+          <Text
+            style={[styles.modeDescription, { color: currentTheme.buttonText }]}
+          >
             {t.inputModeDesc}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.modeCard, { backgroundColor: currentTheme.card }]}
-          onPress={() => router.push('/quiz-multiple')}
+          onPress={() => router.push("/quiz-multiple")}
         >
           <View style={styles.modeIconContainer}>
-            <Ionicons name="list-outline" size={48} color={currentTheme.buttonText} />
+            <Ionicons
+              name="list-outline"
+              size={48}
+              color={currentTheme.buttonText}
+            />
           </View>
-          <Text style={[styles.modeTitle, { color: currentTheme.buttonText }]}>{t.multipleChoiceMode}</Text>
-          <Text style={[styles.modeDescription, { color: currentTheme.buttonText }]}>
+          <Text style={[styles.modeTitle, { color: currentTheme.buttonText }]}>
+            {t.multipleChoiceMode}
+          </Text>
+          <Text
+            style={[styles.modeDescription, { color: currentTheme.buttonText }]}
+          >
             {t.multipleChoiceModeDesc}
           </Text>
         </TouchableOpacity>
       </View>
 
       <Link href="/study" asChild>
-        <TouchableOpacity style={[styles.backButton, { backgroundColor: currentTheme.secondary }]}>
+        <TouchableOpacity
+          style={[
+            styles.backButton,
+            { backgroundColor: currentTheme.secondary },
+          ]}
+        >
           <View style={styles.backButtonContent}>
-            <Ionicons name="arrow-back" size={24} color={currentTheme.buttonText} />
-            <Text style={[styles.backButtonText, { color: currentTheme.buttonText }]}>
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color={currentTheme.buttonText}
+            />
+            <Text
+              style={[
+                styles.backButtonText,
+                { color: currentTheme.buttonText },
+              ]}
+            >
               {t.backToStudy}
             </Text>
           </View>
@@ -69,9 +101,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 30,
   },
   headerLeft: {
@@ -82,7 +114,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     flex: 1,
   },
   settingsButton: {
@@ -90,14 +122,14 @@ const styles = StyleSheet.create({
   },
   modesContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     gap: 20,
   },
   modeCard: {
     padding: 20,
     borderRadius: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -111,25 +143,25 @@ const styles = StyleSheet.create({
   },
   modeTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   modeDescription: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   backButton: {
     padding: 15,
     borderRadius: 10,
-    marginTop: 'auto',
+    marginTop: "auto",
   },
   backButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 5,
   },
   backButtonText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

@@ -1,8 +1,8 @@
-import { Stack, useRouter } from 'expo-router';
-import { ThemeProvider, useTheme } from './context/ThemeContext';
-import { LanguageProvider, useLanguage } from './context/LanguageContext';
-import { StatisticsProvider } from './context/StatisticsContext';
-import { useEffect } from 'react';
+import { Stack, useRouter } from "expo-router";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+import { LanguageProvider, useLanguage } from "./contexts/LanguageContext";
+import { StatisticsProvider } from "./contexts/StatisticsContext";
+import { useEffect } from "react";
 
 function InitialRedirect() {
   const router = useRouter();
@@ -12,7 +12,7 @@ function InitialRedirect() {
   useEffect(() => {
     // Check if theme and language are set
     if (!theme || !language) {
-      router.replace('/settings');
+      router.replace("/settings");
     }
   }, [theme, language]);
 
@@ -35,49 +35,49 @@ export default function RootLayout() {
             <Stack.Screen
               name="study"
               options={{
-                title: 'TilTwelve',
+                title: "TilTwelve",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="quiz-mode"
               options={{
-                title: 'Quiz Mode',
+                title: "Quiz Mode",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="quiz"
               options={{
-                title: 'Quiz',
+                title: "Quiz",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="quiz-multiple"
               options={{
-                title: 'Multiple Choice Quiz',
+                title: "Multiple Choice Quiz",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="settings"
               options={{
-                title: 'Settings',
+                title: "Settings",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="statistics"
               options={{
-                title: 'Statistics',
+                title: "Statistics",
                 headerShown: false,
               }}
             />
             <Stack.Screen
               name="about"
               options={{
-                title: 'About',
+                title: "About",
                 headerShown: false,
               }}
             />

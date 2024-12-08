@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Link } from "expo-router";
-import { useTheme, themes } from "./context/ThemeContext";
-import { useLanguage } from "./context/LanguageContext";
-import { useStatistics } from "./context/StatisticsContext";
+import { useTheme, themes } from "./contexts/ThemeContext";
+import { useLanguage } from "./contexts/LanguageContext";
+import { useStatistics } from "./contexts/StatisticsContext";
 import { Ionicons } from "@expo/vector-icons";
 
 const StatisticsScreen = () => {

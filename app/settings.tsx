@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Link } from 'expo-router';
-import { useTheme, themes, Theme } from './context/ThemeContext';
-import { useLanguage } from './context/LanguageContext';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Link } from "expo-router";
+import { useTheme, themes, Theme } from "./contexts/ThemeContext";
+import { useLanguage } from "./contexts/LanguageContext";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function SettingsScreen() {
   const { theme, setTheme } = useTheme();
@@ -11,19 +11,21 @@ export default function SettingsScreen() {
   const currentTheme = themes[theme];
 
   const themeOptions: { value: Theme; label: string; icon: any }[] = [
-    { value: 'light', label: 'Light', icon: 'sunny-outline' },
-    { value: 'dark', label: 'Dark', icon: 'moon-outline' },
-    { value: 'kids', label: 'Kids', icon: 'game-controller-outline' },
+    { value: "light", label: "Light", icon: "sunny-outline" },
+    { value: "dark", label: "Dark", icon: "moon-outline" },
+    { value: "kids", label: "Kids", icon: "game-controller-outline" },
   ];
 
   const languageOptions = [
-    { value: 'en-US', label: 'English' },
-    { value: 'pt-BR', label: 'Português' },
-    { value: 'es-ES', label: 'Español' },
+    { value: "en-US", label: "English" },
+    { value: "pt-BR", label: "Português" },
+    { value: "es-ES", label: "Español" },
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: currentTheme.background }]}
+    >
       <View style={styles.header}>
         <View style={styles.headerLeft} />
         <Link href="/" asChild>
@@ -32,7 +34,9 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </Link>
       </View>
-      <Text style={[styles.title, { color: currentTheme.text }]}>{t.settings}</Text>
+      <Text style={[styles.title, { color: currentTheme.text }]}>
+        {t.settings}
+      </Text>
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>
           {t.theme}
@@ -43,23 +47,32 @@ export default function SettingsScreen() {
               key={option.value}
               style={[
                 styles.themeOption,
-                theme === option.value && { 
+                theme === option.value && {
                   backgroundColor: currentTheme.primary,
                   borderColor: currentTheme.primary,
                 },
-                { borderColor: currentTheme.text }
+                { borderColor: currentTheme.text },
               ]}
               onPress={() => setTheme(option.value)}
             >
               <Ionicons
                 name={option.icon}
                 size={24}
-                color={theme === option.value ? currentTheme.background : currentTheme.text}
+                color={
+                  theme === option.value
+                    ? currentTheme.background
+                    : currentTheme.text
+                }
               />
               <Text
                 style={[
                   styles.themeText,
-                  { color: theme === option.value ? currentTheme.background : currentTheme.text }
+                  {
+                    color:
+                      theme === option.value
+                        ? currentTheme.background
+                        : currentTheme.text,
+                  },
                 ]}
               >
                 {option.label}
@@ -83,7 +96,7 @@ export default function SettingsScreen() {
                   backgroundColor: currentTheme.primary,
                   borderColor: currentTheme.primary,
                 },
-                { borderColor: currentTheme.text }
+                { borderColor: currentTheme.text },
               ]}
               onPress={() => setLanguage(option.value)}
             >
@@ -106,10 +119,24 @@ export default function SettingsScreen() {
       </View>
 
       <Link href="/about" asChild>
-        <TouchableOpacity style={[styles.aboutButton, { backgroundColor: currentTheme.secondary }]}>
+        <TouchableOpacity
+          style={[
+            styles.aboutButton,
+            { backgroundColor: currentTheme.secondary },
+          ]}
+        >
           <View style={styles.aboutButtonContent}>
-            <Ionicons name="information-circle-outline" size={28} color={currentTheme.buttonText} />
-            <Text style={[styles.aboutButtonText, { color: currentTheme.buttonText }]}>
+            <Ionicons
+              name="information-circle-outline"
+              size={28}
+              color={currentTheme.buttonText}
+            />
+            <Text
+              style={[
+                styles.aboutButtonText,
+                { color: currentTheme.buttonText },
+              ]}
+            >
               {t.about}
             </Text>
           </View>
@@ -125,9 +152,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   headerLeft: {
     flex: 1,
@@ -137,27 +164,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   section: {
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
   },
   themeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   themeOption: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 12,
     borderRadius: 12,
     borderWidth: 2,
@@ -166,15 +193,15 @@ const styles = StyleSheet.create({
   },
   themeText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   languageContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   languageOption: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 12,
     borderRadius: 12,
     borderWidth: 2,
@@ -182,16 +209,16 @@ const styles = StyleSheet.create({
   },
   languageText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   aboutButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 5,
     marginBottom: 30,
     marginTop: 20,
-    justifyContent: 'center',
-    borderColor: '#666',
+    justifyContent: "center",
+    borderColor: "#666",
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
@@ -203,6 +230,6 @@ const styles = StyleSheet.create({
   },
   aboutButtonText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

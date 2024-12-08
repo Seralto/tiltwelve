@@ -1,17 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { Link } from 'expo-router';
-import { useTheme, themes } from './context/ThemeContext';
-import { useLanguage } from './context/LanguageContext';
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { Link } from "expo-router";
+import { useTheme, themes } from "./contexts/ThemeContext";
+import { useLanguage } from "./contexts/LanguageContext";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const HIDE_ANSWERS_KEY = '@tiltwelve:hideAnswers';
+const HIDE_ANSWERS_KEY = "@tiltwelve:hideAnswers";
 
 const StudyScreen = () => {
   const [selectedNumber, setSelectedNumber] = useState(1);
   const [hideAnswers, setHideAnswers] = useState(false);
-  const [hiddenAnswers, setHiddenAnswers] = useState<{[key: number]: boolean}>({});
+  const [hiddenAnswers, setHiddenAnswers] = useState<{
+    [key: number]: boolean;
+  }>({});
   const [isLoading, setIsLoading] = useState(true);
   const selectorNumbers = Array.from({ length: 12 }, (_, i) => i + 1); // 1 to 12
   const firstRowNumbers = selectorNumbers.slice(0, 6); // 1 to 6
@@ -28,20 +36,20 @@ const StudyScreen = () => {
   const loadPreferences = async () => {
     try {
       const storedHideAnswers = await AsyncStorage.getItem(HIDE_ANSWERS_KEY);
-      
+
       if (storedHideAnswers !== null) {
-        setHideAnswers(storedHideAnswers === 'true');
-        if (storedHideAnswers === 'true') {
+        setHideAnswers(storedHideAnswers === "true");
+        if (storedHideAnswers === "true") {
           // If hide answers is enabled, initialize all answers as hidden
           const allHidden = tableNumbers.reduce((acc, num) => {
             acc[num] = true;
             return acc;
-          }, {} as {[key: number]: boolean});
+          }, {} as { [key: number]: boolean });
           setHiddenAnswers(allHidden);
         }
       }
     } catch (error) {
-      console.error('Error loading preferences:', error);
+      console.error("Error loading preferences:", error);
     } finally {
       setIsLoading(false);
     }
@@ -50,44 +58,47 @@ const StudyScreen = () => {
   const toggleMasterHide = async () => {
     const newHideAnswers = !hideAnswers;
     setHideAnswers(newHideAnswers);
-    
+
     try {
       await AsyncStorage.setItem(HIDE_ANSWERS_KEY, String(newHideAnswers));
-      
+
       if (newHideAnswers) {
         // When enabling hide feature, hide all answers
         const allHidden = tableNumbers.reduce((acc, num) => {
           acc[num] = true;
           return acc;
-        }, {} as {[key: number]: boolean});
+        }, {} as { [key: number]: boolean });
         setHiddenAnswers(allHidden);
       } else {
         // When disabling hide feature, show all answers
         setHiddenAnswers({});
       }
     } catch (error) {
-      console.error('Error saving preferences:', error);
+      console.error("Error saving preferences:", error);
     }
   };
 
   const revealAnswer = (number: number) => {
     if (!hideAnswers) return;
-    setHiddenAnswers(prev => ({
+    setHiddenAnswers((prev) => ({
       ...prev,
-      [number]: false
+      [number]: false,
     }));
   };
 
   const renderMultiplicationTable = () => {
     return tableNumbers.map((number) => (
-      <View key={number} style={[styles.tableRow, { borderBottomColor: currentTheme.border }]}>
+      <View
+        key={number}
+        style={[styles.tableRow, { borderBottomColor: currentTheme.border }]}
+      >
         <View style={styles.equationContainer}>
           <Text style={[styles.tableText, { color: currentTheme.text }]}>
             {selectedNumber} × {number} =
           </Text>
           {hideAnswers ? (
             hiddenAnswers[number] ? (
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => revealAnswer(number)}
                 style={styles.answerContainer}
               >
@@ -110,35 +121,45 @@ const StudyScreen = () => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <View
+        style={[styles.container, { backgroundColor: currentTheme.background }]}
+      >
         <Text style={{ color: currentTheme.text }}>{t.loading}</Text>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: currentTheme.background }]}
+    >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: currentTheme.text }]}>{t.studyTitle}</Text>
+        <Text style={[styles.title, { color: currentTheme.text }]}>
+          {t.studyTitle}
+        </Text>
         <View style={styles.rightIcons}>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={toggleMasterHide}
             style={styles.iconButton}
           >
-            <Ionicons 
-              name={hideAnswers ? "eye-off-outline" : "eye-outline"} 
-              size={24} 
-              color={currentTheme.text} 
+            <Ionicons
+              name={hideAnswers ? "eye-off-outline" : "eye-outline"}
+              size={24}
+              color={currentTheme.text}
             />
           </TouchableOpacity>
           <Link href="/" asChild>
             <TouchableOpacity style={styles.iconButton}>
-              <Ionicons name="home-outline" size={24} color={currentTheme.text} />
+              <Ionicons
+                name="home-outline"
+                size={24}
+                color={currentTheme.text}
+              />
             </TouchableOpacity>
           </Link>
         </View>
       </View>
-      
+
       <View style={styles.numberSelectorContainer}>
         <View style={styles.numberRow}>
           {firstRowNumbers.map((number) => (
@@ -146,8 +167,10 @@ const StudyScreen = () => {
               key={number}
               style={[
                 styles.numberButton,
-                selectedNumber === number && { backgroundColor: currentTheme.primary },
-                { borderColor: currentTheme.primary }
+                selectedNumber === number && {
+                  backgroundColor: currentTheme.primary,
+                },
+                { borderColor: currentTheme.primary },
               ]}
               onPress={() => {
                 setSelectedNumber(number);
@@ -156,15 +179,20 @@ const StudyScreen = () => {
                   const allHidden = tableNumbers.reduce((acc, num) => {
                     acc[num] = true;
                     return acc;
-                  }, {} as {[key: number]: boolean});
+                  }, {} as { [key: number]: boolean });
                   setHiddenAnswers(allHidden);
                 }
               }}
             >
-              <Text style={[
-                styles.numberText,
-                { color: selectedNumber === number ? '#fff' : currentTheme.text },
-              ]}>
+              <Text
+                style={[
+                  styles.numberText,
+                  {
+                    color:
+                      selectedNumber === number ? "#fff" : currentTheme.text,
+                  },
+                ]}
+              >
                 {number}
               </Text>
             </TouchableOpacity>
@@ -176,8 +204,10 @@ const StudyScreen = () => {
               key={number}
               style={[
                 styles.numberButton,
-                selectedNumber === number && { backgroundColor: currentTheme.primary },
-                { borderColor: currentTheme.primary }
+                selectedNumber === number && {
+                  backgroundColor: currentTheme.primary,
+                },
+                { borderColor: currentTheme.primary },
               ]}
               onPress={() => {
                 setSelectedNumber(number);
@@ -186,15 +216,20 @@ const StudyScreen = () => {
                   const allHidden = tableNumbers.reduce((acc, num) => {
                     acc[num] = true;
                     return acc;
-                  }, {} as {[key: number]: boolean});
+                  }, {} as { [key: number]: boolean });
                   setHiddenAnswers(allHidden);
                 }
               }}
             >
-              <Text style={[
-                styles.numberText,
-                { color: selectedNumber === number ? '#fff' : currentTheme.text },
-              ]}>
+              <Text
+                style={[
+                  styles.numberText,
+                  {
+                    color:
+                      selectedNumber === number ? "#fff" : currentTheme.text,
+                  },
+                ]}
+              >
                 {number}
               </Text>
             </TouchableOpacity>
@@ -202,13 +237,19 @@ const StudyScreen = () => {
         </View>
       </View>
 
-      <ScrollView style={[styles.tableContainer, { backgroundColor: currentTheme.card }]}>
+      <ScrollView
+        style={[styles.tableContainer, { backgroundColor: currentTheme.card }]}
+      >
         {renderMultiplicationTable()}
       </ScrollView>
 
       <Link href="/quiz-mode" asChild>
-        <TouchableOpacity style={[styles.quizButton, { backgroundColor: currentTheme.primary }]}>
-          <Text style={[styles.quizButtonText, { color: currentTheme.buttonText }]}>
+        <TouchableOpacity
+          style={[styles.quizButton, { backgroundColor: currentTheme.primary }]}
+        >
+          <Text
+            style={[styles.quizButtonText, { color: currentTheme.buttonText }]}
+          >
             {t.takeQuiz}
           </Text>
         </TouchableOpacity>
@@ -223,18 +264,18 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   rightIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     flex: 1,
   },
   iconButton: {
@@ -244,16 +285,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   numberRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   numberButton: {
     width: 45,
     height: 45,
     borderRadius: 23,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 3,
   },
   numberText: {
@@ -270,20 +311,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   equationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingRight: 10,
   },
   answerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   answerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     minWidth: 80,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   tableText: {
     fontSize: 20,
@@ -297,11 +338,11 @@ const styles = StyleSheet.create({
   quizButton: {
     padding: 15,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   quizButtonText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
