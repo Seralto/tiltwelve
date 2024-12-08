@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  ScrollView,
 } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";

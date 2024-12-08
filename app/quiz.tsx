@@ -5,8 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Keyboard,
-  ScrollView,
 } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";
