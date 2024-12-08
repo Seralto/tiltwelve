@@ -23,6 +23,12 @@ export default function Home() {
       description: t.quizDescription || "Test your knowledge",
     },
     {
+      title: "Competition",
+      icon: "trophy-outline",
+      href: "/competition",
+      description: "Compete with a friend",
+    },
+    {
       title: t.statistics,
       icon: "stats-chart-outline",
       href: "/statistics",

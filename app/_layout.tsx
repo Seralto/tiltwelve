@@ -81,6 +81,13 @@ export default function RootLayout() {
                 headerShown: false,
               }}
             />
+            <Stack.Screen
+              name="competition"
+              options={{
+                title: "Competition",
+                headerShown: false,
+              }}
+            />
           </Stack>
         </StatisticsProvider>
       </LanguageProvider>
