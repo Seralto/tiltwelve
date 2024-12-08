@@ -17,6 +17,9 @@ const CompetitionScreen = () => {
   const [currentQuestion, setCurrentQuestion] = useState({ num1: 8, num2: 4 });
   const [options, setOptions] = useState([32, 28, 21, 36]);
   const [currentPlayer, setCurrentPlayer] = useState(1);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [questionsAsked, setQuestionsAsked] = useState(0);
+  const maxQuestions = 10;
 
   const generateNewQuestion = () => {
     const num1 = Math.floor(Math.random() * 12) + 1;
@@ -50,11 +53,46 @@ const CompetitionScreen = () => {
     }
     setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? 2 : 1));
     generateNewQuestion();
+    setQuestionsAsked((prev) => prev + 1);
   };
 
   useEffect(() => {
     generateNewQuestion();
   }, []);
+
+  if (!gameStarted) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.startButton}
+          onPress={() => setGameStarted(true)}
+        >
+          <Text style={styles.startButtonText}>{t.startGame}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (questionsAsked >= maxQuestions) {
+    const winner = player1Score > player2Score ? t.player1 : t.player2;
+    return (
+      <View style={styles.container}>
+        <Text style={styles.finalScore}>{t.finalScore}</Text>
+        <Text style={styles.winner}>{t.winner}: {winner}</Text>
+        <TouchableOpacity
+          style={styles.startButton}
+          onPress={() => {
+            setGameStarted(false);
+            setPlayer1Score(0);
+            setPlayer2Score(0);
+            setQuestionsAsked(0);
+          }}
+        >
+          <Text style={styles.startButtonText}>{t.playAgain}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View
@@ -77,7 +115,7 @@ const CompetitionScreen = () => {
           ]}
         >
           <Text style={[styles.score, { color: currentTheme.text }]}>
-            Player 1: {player1Score}
+            {t.player1}: {player1Score}
           </Text>
           <Text style={[styles.question, { color: currentTheme.text }]}>
             {currentQuestion.num1} × {currentQuestion.num2} = ?
@@ -86,10 +124,17 @@ const CompetitionScreen = () => {
             {options.map((option, index) => (
               <View key={index} style={styles.optionWrapper}>
                 <TouchableOpacity
-                  style={[styles.optionButton, { backgroundColor: currentTheme.card }]}
+                  style={[
+                    styles.optionButton,
+                    { backgroundColor: currentTheme.card },
+                  ]}
                   onPress={() => handleAnswer(option)}
                 >
-                  <Text style={[styles.optionText, { color: currentTheme.text }]}>{option}</Text>
+                  <Text
+                    style={[styles.optionText, { color: currentTheme.text }]}
+                  >
+                    {option}
+                  </Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -103,7 +148,7 @@ const CompetitionScreen = () => {
           ]}
         >
           <Text style={[styles.score, { color: currentTheme.text }]}>
-            Player 2: {player2Score}
+            {t.player2}: {player2Score}
           </Text>
           <Text style={[styles.question, { color: currentTheme.text }]}>
             {currentQuestion.num1} × {currentQuestion.num2} = ?
@@ -112,10 +157,17 @@ const CompetitionScreen = () => {
             {options.map((option, index) => (
               <View key={index} style={styles.optionWrapper}>
                 <TouchableOpacity
-                  style={[styles.optionButton, { backgroundColor: currentTheme.card }]}
+                  style={[
+                    styles.optionButton,
+                    { backgroundColor: currentTheme.card },
+                  ]}
                   onPress={() => handleAnswer(option)}
                 >
-                  <Text style={[styles.optionText, { color: currentTheme.text }]}>{option}</Text>
+                  <Text
+                    style={[styles.optionText, { color: currentTheme.text }]}
+                  >
+                    {option}
+                  </Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -198,6 +250,27 @@ const styles = StyleSheet.create({
   },
   homeButton: {
     padding: 10,
+  },
+  startButton: {
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 20,
+  },
+  startButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  finalScore: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  winner: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
 });
 
