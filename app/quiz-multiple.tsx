@@ -427,7 +427,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
   },
   headerLeft: {
     flex: 1,
@@ -577,7 +576,7 @@ const styles = StyleSheet.create({
     borderColor: "#666",
     borderWidth: 1,
     borderRadius: 10,
-    marginBottom: 20,
+    marginBottom: 25,
     paddingVertical: 12,
     marginTop: 10,
     gap: 8,
