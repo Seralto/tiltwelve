@@ -8,9 +8,9 @@
     "scheme": "tiltwelve",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#5f617e"
+      "backgroundColor": "#3ba6c6"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -21,14 +21,14 @@
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#5f617e"
+        "backgroundColor": "#3ba6c6"
       },
       "permissions": []
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "description": "Learn multiplication tables in a fun and interactive way. Practice with input or multiple choice quizzes, track your progress, and master multiplication in multiple languages.",
+    "description": "Learn multiplication tables in a fun and interactive way.",
     "primaryColor": "#4A90E2",
     "extra": {
       "eas": {
