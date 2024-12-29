@@ -2,7 +2,7 @@
   "expo": {
     "name": "TilTwelve",
     "slug": "tiltwelve",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tiltwelve",
@@ -18,7 +18,7 @@
     },
     "android": {
       "package": "com.sergiotoledo.tiltwelve",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#3ba6c6"
