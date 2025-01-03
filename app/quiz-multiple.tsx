@@ -291,9 +291,6 @@ export default function MultipleChoiceQuizScreen() {
           </TouchableOpacity>
         </Link>
       </View>
-      <Text style={[styles.title, { color: currentTheme.text }]}>
-        {t.quizTitle}
-      </Text>
 
       {renderTableSelection()}
 
@@ -302,7 +299,7 @@ export default function MultipleChoiceQuizScreen() {
           {selectedTable
             ? t.tableScore.replace("{{table}}", selectedTable.toString())
             : t.globalScore}
-          : {highScore}
+          : <Text style={styles.scoreNumber}>{highScore}</Text>
         </Text>
       </View>
 
@@ -447,6 +444,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 5,
+  },
+  scoreNumber: {
+    fontSize: 20,
   },
   highScoreText: {
     fontSize: 16,
