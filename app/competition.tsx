@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     transform: [{ translateY: -12 }],
   },
   feedbackText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
     padding: 10,
