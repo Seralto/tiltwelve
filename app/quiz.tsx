@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   questionContainer: {
-    padding: 16,
+    paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 20,

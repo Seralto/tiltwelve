@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   questionContainer: {
-    padding: 16,
+    paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 20,
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    gap: 15,
+    gap: 10,
     marginBottom: 20,
   },
   optionWrapper: {
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   optionText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
   },
   feedback: {
