@@ -198,6 +198,7 @@ const StudyScreen = () => {
             </TouchableOpacity>
           ))}
         </View>
+
         <View style={styles.numberRow}>
           {secondRowNumbers.map((number) => (
             <TouchableOpacity
@@ -303,11 +304,12 @@ const styles = StyleSheet.create({
   tableContainer: {
     flex: 1,
     borderRadius: 10,
-    padding: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     marginBottom: 20,
   },
   tableRow: {
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderBottomWidth: 1,
   },
   equationContainer: {
