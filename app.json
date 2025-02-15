@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#3ba6c6"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "android": {
       "package": "com.sergiotoledo.tiltwelve",
       "versionCode": 5,
@@ -32,6 +34,9 @@
       }
     },
     "owner": "seralto",
-    "newArchEnabled": true
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
