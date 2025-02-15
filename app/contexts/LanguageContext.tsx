@@ -66,6 +66,7 @@ export const translations = {
     finalScore: "Final Score",
     winner: "Winner",
     playAgain: "Play Again",
+    return: "Return",
   },
   "pt-BR": {
     studyTitle: "Tabuadas",
@@ -117,6 +118,7 @@ export const translations = {
     finalScore: "Pontuação Final",
     winner: "Vencedor",
     playAgain: "Jogar Novamente",
+    return: "Voltar",
   },
   "es-ES": {
     studyTitle: "Tablas de Multiplicar",
@@ -168,6 +170,7 @@ export const translations = {
     finalScore: "Puntuación Final",
     winner: "Ganador",
     playAgain: "Jugar de Nuevo",
+    return: "Volver",
   },
 };
 

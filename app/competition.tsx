@@ -90,17 +90,42 @@ const CompetitionScreen = () => {
       >
         <TouchableOpacity
           style={[
-            styles.startButton,
+            styles.optionsButton,
             { backgroundColor: currentTheme.primary },
           ]}
           onPress={() => setGameStarted(true)}
         >
           <Text
-            style={[styles.startButtonText, { color: currentTheme.background }]}
+            style={[
+              styles.optionsButtonText,
+              { color: currentTheme.background },
+            ]}
           >
             {t.startGame}
           </Text>
         </TouchableOpacity>
+
+        <View style={styles.header}>
+          <Link
+            style={[
+              styles.optionsButton,
+              { backgroundColor: currentTheme.primary },
+            ]}
+            href="/"
+            asChild
+          >
+            <TouchableOpacity style={styles.homeButton}>
+              <Text
+                style={[
+                  styles.optionsButtonText,
+                  { color: currentTheme.background },
+                ]}
+              >
+                {t.return}
+              </Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
       </View>
     );
   }
@@ -353,14 +378,15 @@ const styles = StyleSheet.create({
   homeButton: {
     padding: 10,
   },
-  startButton: {
-    padding: 15,
+  optionsButton: {
+    width: 150,
+    height: 55,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 20,
   },
-  startButtonText: {
+  optionsButtonText: {
     fontSize: 18,
     fontWeight: "bold",
   },

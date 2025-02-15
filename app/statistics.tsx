@@ -166,7 +166,8 @@ const styles = StyleSheet.create({
   },
   numberCard: {
     borderRadius: 12,
-    padding: 16,
+    paddingHorizontal: 13,
+    paddingVertical: 16,
     marginBottom: 16,
     elevation: 2,
     shadowColor: "#000",

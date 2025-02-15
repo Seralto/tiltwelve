@@ -2,28 +2,24 @@
   "expo": {
     "name": "TilTwelve",
     "slug": "tiltwelve",
-    "version": "1.0.2",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tiltwelve",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image": "./assets/images/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#3ba6c6"
     },
     "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "package": "com.sergiotoledo.tiltwelve",
-      "versionCode": 3,
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#3ba6c6"
-      },
-      "permissions": []
+      }
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
