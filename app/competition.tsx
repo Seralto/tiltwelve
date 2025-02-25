@@ -24,6 +24,8 @@ const CompetitionScreen = () => {
     player: number | null;
   }>({ message: "", player: null });
 
+  let lastCorrectIndex = -1;
+
   const generateNewQuestion = () => {
     const num1 = Math.floor(Math.random() * 12) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
@@ -36,7 +38,19 @@ const CompetitionScreen = () => {
         newOptions.push(wrongAnswer);
       }
     }
-    setOptions(newOptions.sort(() => Math.random() - 0.5));
+
+    let currentCorrectIndex;
+    do {
+      // Shuffle options
+      for (let i = newOptions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newOptions[i], newOptions[j]] = [newOptions[j], newOptions[i]];
+      }
+      currentCorrectIndex = newOptions.indexOf(correctAnswer);
+    } while (currentCorrectIndex === lastCorrectIndex);
+
+    lastCorrectIndex = currentCorrectIndex;
+    setOptions(newOptions);
   };
 
   const handleAnswer = async (answer: number, player: number) => {

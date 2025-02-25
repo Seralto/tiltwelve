@@ -34,6 +34,8 @@ export default function MultipleChoiceQuizScreen() {
   const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
 
+  let lastCorrectIndex = -1;
+
   function generateQuestion(
     currentTable: number | null,
     used: Set<string>,
@@ -100,7 +102,18 @@ export default function MultipleChoiceQuizScreen() {
       }
     }
 
-    return Array.from(options).sort((a, b) => a - b);
+    const optionsArray = Array.from(options);
+    let currentCorrectIndex;
+    do {
+      for (let i = optionsArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optionsArray[i], optionsArray[j]] = [optionsArray[j], optionsArray[i]];
+      }
+      currentCorrectIndex = optionsArray.indexOf(correctAnswer);
+    } while (currentCorrectIndex === lastCorrectIndex);
+
+    lastCorrectIndex = currentCorrectIndex;
+    return optionsArray;
   }
 
   // Only run on initial mount and table change
