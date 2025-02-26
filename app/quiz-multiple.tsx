@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
+  Dimensions,
 } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";
@@ -33,6 +34,8 @@ export default function MultipleChoiceQuizScreen() {
   const { t } = useLanguage();
   const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
 
   let lastCorrectIndex = -1;
 
@@ -229,6 +232,7 @@ export default function MultipleChoiceQuizScreen() {
                 selectedTable === num && {
                   backgroundColor: currentTheme.primary,
                 },
+                isSmallScreen && { paddingVertical: 2 },
               ]}
               onPress={() => {
                 setSelectedTable(num);
@@ -294,44 +298,80 @@ export default function MultipleChoiceQuizScreen() {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
+      style={[
+        styles.container,
+        isSmallScreen && { padding: 12 },
+        { backgroundColor: currentTheme.background },
+      ]}
     >
       <View style={styles.header}>
         <View style={styles.headerLeft} />
         <Link href="/" asChild>
-          <TouchableOpacity style={styles.homeButton}>
-            <Ionicons name="home-outline" size={24} color={currentTheme.text} />
+          <TouchableOpacity
+            style={[styles.homeButton, isSmallScreen && { padding: 6 }]}
+          >
+            <Ionicons
+              name="home-outline"
+              size={isSmallScreen ? 18 : 24}
+              color={currentTheme.text}
+            />
           </TouchableOpacity>
         </Link>
       </View>
 
       {renderTableSelection()}
 
-      <View style={styles.scoreContainer}>
-        <Text style={[styles.scoreText, { color: currentTheme.secondary }]}>
+      <View
+        style={[styles.scoreContainer, isSmallScreen && { marginBottom: 8 }]}
+      >
+        <Text
+          style={[
+            styles.scoreText,
+            isSmallScreen && { fontSize: 14 },
+            { color: currentTheme.secondary },
+          ]}
+        >
           {selectedTable
             ? t.tableScore.replace("{{table}}", selectedTable.toString())
             : t.globalScore}
-          : <Text style={styles.scoreNumber}>{highScore}</Text>
+          : <Text style={styles.scoreNumber}>{highScore.toLocaleString()}</Text>
         </Text>
       </View>
 
       <View
         style={[
           styles.questionContainer,
+          isSmallScreen && { paddingVertical: 8 },
           { backgroundColor: currentTheme.card },
         ]}
       >
-        <Text style={[styles.questionText, { color: currentTheme.text }]}>
+        <Text
+          style={[
+            styles.questionText,
+            isSmallScreen && { fontSize: 24 },
+            { color: currentTheme.text },
+          ]}
+        >
           {currentQuestion.num1} × {currentQuestion.num2} = ?
         </Text>
       </View>
 
-      <Text style={[styles.chooseText, { color: currentTheme.secondary }]}>
+      <Text
+        style={[
+          styles.chooseText,
+          isSmallScreen && { fontSize: 14 },
+          { color: currentTheme.secondary },
+        ]}
+      >
         {t.chooseAnswer}
       </Text>
 
-      <View style={styles.optionsContainer}>
+      <View
+        style={[
+          styles.optionsContainer,
+          isSmallScreen && { gap: 6, marginBottom: 14 },
+        ]}
+      >
         {options.map((option, index) => (
           <Animated.View
             key={index}
@@ -343,12 +383,19 @@ export default function MultipleChoiceQuizScreen() {
             <TouchableOpacity
               style={[
                 styles.optionButton,
+                isSmallScreen && { padding: 10 },
                 { backgroundColor: currentTheme.card },
               ]}
               onPress={() => handleAnswer(option, index)}
               disabled={!!feedback}
             >
-              <Text style={[styles.optionText, { color: currentTheme.text }]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  isSmallScreen && { fontSize: 18 },
+                  { color: currentTheme.text },
+                ]}
+              >
                 {option}
               </Text>
             </TouchableOpacity>
@@ -363,6 +410,7 @@ export default function MultipleChoiceQuizScreen() {
             feedback.includes("🎉")
               ? styles.correctFeedback
               : styles.incorrectFeedback,
+            isSmallScreen && { fontSize: 1, marginBottom: 4 },
           ]}
         >
           {feedback}
@@ -379,18 +427,20 @@ export default function MultipleChoiceQuizScreen() {
         <TouchableOpacity
           style={[
             styles.toggleButton,
+            isSmallScreen && { padding: 10 },
             { backgroundColor: currentTheme.secondary },
           ]}
         >
           <View style={styles.toggleButtonContent}>
             <Ionicons
               name="keypad-outline"
-              size={24}
+              size={isSmallScreen ? 18 : 24}
               color={currentTheme.buttonText}
             />
             <Text
               style={[
                 styles.toggleButtonText,
+                isSmallScreen && { fontSize: 14 },
                 { color: currentTheme.buttonText },
               ]}
             >
@@ -404,18 +454,20 @@ export default function MultipleChoiceQuizScreen() {
         <TouchableOpacity
           style={[
             styles.backButton,
+            isSmallScreen && { padding: 10 },
             { backgroundColor: currentTheme.secondary },
           ]}
         >
           <View style={styles.backButtonContent}>
             <Ionicons
               name="arrow-back"
-              size={24}
+              size={isSmallScreen ? 18 : 24}
               color={currentTheme.buttonText}
             />
             <Text
               style={[
                 styles.backButtonText,
+                isSmallScreen && { fontSize: 14 },
                 { color: currentTheme.buttonText },
               ]}
             >
@@ -463,7 +515,6 @@ const styles = StyleSheet.create({
   },
   highScoreText: {
     fontSize: 16,
-    fontWeight: "500",
   },
   questionContainer: {
     paddingVertical: 12,
@@ -519,7 +570,7 @@ const styles = StyleSheet.create({
   feedback: {
     fontSize: 18,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 10,
     padding: 10,
     borderRadius: 10,
   },

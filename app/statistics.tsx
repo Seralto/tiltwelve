@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { Link } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";
@@ -17,6 +18,8 @@ const StatisticsScreen = () => {
   const { t } = useLanguage();
   const { statistics } = useStatistics();
   const currentTheme = themes[theme];
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
 
   const renderNumberStats = (number: number) => {
     const numberStats = statistics[number] || {};
@@ -31,20 +34,36 @@ const StatisticsScreen = () => {
     return (
       <View
         key={number}
-        style={[styles.numberCard, { backgroundColor: currentTheme.card }]}
+        style={[
+          styles.numberCard,
+          isSmallScreen && { paddingHorizontal: 10, paddingVertical: 14 },
+          { backgroundColor: currentTheme.card },
+        ]}
       >
-        <Text style={[styles.numberTitle, { color: currentTheme.text }]}>
+        <Text
+          style={[
+            styles.numberTitle,
+            isSmallScreen && { fontSize: 18 },
+            { color: currentTheme.text },
+          ]}
+        >
           {t.table} {number}
         </Text>
         <View
-          style={[styles.separator, { backgroundColor: currentTheme.border }]}
+          style={[
+            styles.separator,
+            { backgroundColor: currentTheme.border },
+          ]}
         />
         <View style={styles.equationsContainer}>
           {equations.map(({ equation, percentage, attempts }) => (
             <View key={equation}>
               <View style={styles.equationRow}>
                 <Text
-                  style={[styles.equationText, { color: currentTheme.text }]}
+                  style={[
+                    styles.equationText,
+                    { color: currentTheme.text },
+                  ]}
                 >
                   {equation}
                 </Text>
@@ -95,7 +114,11 @@ const StatisticsScreen = () => {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
+      style={[
+        styles.container,
+        isSmallScreen && { paddingHorizontal: 3, paddingTop: 3 },
+        { backgroundColor: currentTheme.background },
+      ]}
     >
       <View style={styles.header}>
         <View style={styles.headerLeft} />
@@ -108,19 +131,23 @@ const StatisticsScreen = () => {
       <ScrollView
         style={[
           styles.scrollView,
+          isSmallScreen && { paddingHorizontal: 12 },
           { backgroundColor: currentTheme.background },
         ]}
         contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[styles.title, { color: currentTheme.text }]}>
+        <Text
+          style={[
+            styles.title,
+            isSmallScreen && { fontSize: 20 },
+            { color: currentTheme.text },
+          ]}
+        >
           {t.statistics}
         </Text>
         <View style={styles.tablesContainer}>
-          {Array.from({ length: 6 }, (_, i) => i + 1).map((number) =>
-            renderNumberStats(number)
-          )}
-          {Array.from({ length: 6 }, (_, i) => i + 7).map((number) =>
+          {Array.from({ length: 10 }, (_, i) => i + 1).map((number) =>
             renderNumberStats(number)
           )}
         </View>

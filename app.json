@@ -2,7 +2,7 @@
   "expo": {
     "name": "TilTwelve",
     "slug": "tiltwelve",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tiltwelve",
@@ -12,12 +12,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#3ba6c6"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "android": {
       "package": "com.sergiotoledo.tiltwelve",
-      "versionCode": 5,
+      "versionCode": 6,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#3ba6c6"
@@ -35,8 +33,6 @@
     },
     "owner": "seralto",
     "newArchEnabled": true,
-    "plugins": [
-      "expo-router"
-    ]
+    "plugins": ["expo-router"]
   }
 }

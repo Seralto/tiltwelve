@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Linking,
+  Dimensions,
 } from "react-native";
 import { Link } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";
@@ -15,6 +16,8 @@ export default function AboutScreen() {
   const { theme } = useTheme();
   const { t } = useLanguage();
   const currentTheme = themes[theme];
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
 
   const openGithub = () => {
     Linking.openURL("https://github.com/Seralto");
@@ -44,82 +47,205 @@ export default function AboutScreen() {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
+      style={[
+        styles.container,
+        isSmallScreen && { padding: 16 },
+        { backgroundColor: currentTheme.background },
+      ]}
     >
-      <Text style={[styles.title, { color: currentTheme.text }]}>
+      <Text
+        style={[
+          styles.title,
+          isSmallScreen && { fontSize: 20 },
+          { color: currentTheme.text },
+        ]}
+      >
         {t.about}
       </Text>
 
-      <View style={[styles.card, { backgroundColor: currentTheme.card }]}>
-        <Text style={[styles.description, { color: currentTheme.text }]}>
+      <View
+        style={[
+          styles.card,
+          isSmallScreen && { padding: 16 },
+          { backgroundColor: currentTheme.card },
+        ]}
+      >
+        <Text
+          style={[
+            styles.description,
+            isSmallScreen && { fontSize: 14, lineHeight: 20 },
+            { color: currentTheme.text },
+          ]}
+        >
           {t.aboutDescription}
         </Text>
 
-        <View style={styles.socialButtons}>
+        <View
+          style={[
+            styles.socialButtons,
+            isSmallScreen && { gap: 10 },
+          ]}
+        >
           <TouchableOpacity
-            style={[styles.socialButton, { backgroundColor: "#333333" }]}
+            style={[
+              styles.socialButton,
+              isSmallScreen && { padding: 10 },
+              { backgroundColor: "#333333" },
+            ]}
             onPress={openGithub}
           >
-            <Ionicons name="logo-github" size={24} color="#FFFFFF" />
-            <Text style={[styles.socialText, { color: "#FFFFFF" }]}>
+            <Ionicons
+              name="logo-github"
+              size={isSmallScreen ? 20 : 24}
+              color="#FFFFFF"
+            />
+            <Text
+              style={[
+                styles.socialText,
+                isSmallScreen && { fontSize: 14 },
+                { color: "#FFFFFF" },
+              ]}
+            >
               GitHub
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.socialButton, { backgroundColor: "#FF0000" }]}
+            style={[
+              styles.socialButton,
+              isSmallScreen && { padding: 10 },
+              { backgroundColor: "#FF0000" },
+            ]}
             onPress={openYoutube}
           >
-            <Ionicons name="logo-youtube" size={24} color="#FFFFFF" />
-            <Text style={[styles.socialText, { color: "#FFFFFF" }]}>
+            <Ionicons
+              name="logo-youtube"
+              size={isSmallScreen ? 20 : 24}
+              color="#FFFFFF"
+            />
+            <Text
+              style={[
+                styles.socialText,
+                isSmallScreen && { fontSize: 14 },
+                { color: "#FFFFFF" },
+              ]}
+            >
               YouTube
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.socialButton, { backgroundColor: "#0077B5" }]}
+            style={[
+              styles.socialButton,
+              isSmallScreen && { padding: 10 },
+              { backgroundColor: "#0077B5" },
+            ]}
             onPress={openLinkedin}
           >
-            <Ionicons name="logo-linkedin" size={24} color="#FFFFFF" />
-            <Text style={[styles.socialText, { color: "#FFFFFF" }]}>
+            <Ionicons
+              name="logo-linkedin"
+              size={isSmallScreen ? 20 : 24}
+              color="#FFFFFF"
+            />
+            <Text
+              style={[
+                styles.socialText,
+                isSmallScreen && { fontSize: 14 },
+                { color: "#FFFFFF" },
+              ]}
+            >
               LinkedIn
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.socialButton, { backgroundColor: "#01875F" }]}
+            style={[
+              styles.socialButton,
+              isSmallScreen && { padding: 10 },
+              { backgroundColor: "#01875F" },
+            ]}
             onPress={openPlayStore}
           >
-            <Ionicons name="logo-google-playstore" size={24} color="#FFFFFF" />
-            <Text style={[styles.socialText, { color: "#FFFFFF" }]}>
+            <Ionicons
+              name="logo-google-playstore"
+              size={isSmallScreen ? 20 : 24}
+              color="#FFFFFF"
+            />
+            <Text
+              style={[
+                styles.socialText,
+                isSmallScreen && { fontSize: 14 },
+                { color: "#FFFFFF" },
+              ]}
+            >
               Play Store
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.socialButton, { backgroundColor: "#4A90E2" }]}
+            style={[
+              styles.socialButton,
+              isSmallScreen && { padding: 10 },
+              { backgroundColor: "#4A90E2" },
+            ]}
             onPress={openWebsite}
           >
-            <Ionicons name="globe-outline" size={24} color="#FFFFFF" />
-            <Text style={[styles.socialText, { color: "#FFFFFF" }]}>
+            <Ionicons
+              name="globe-outline"
+              size={isSmallScreen ? 20 : 24}
+              color="#FFFFFF"
+            />
+            <Text
+              style={[
+                styles.socialText,
+                isSmallScreen && { fontSize: 14 },
+                { color: "#FFFFFF" },
+              ]}
+            >
               Website
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.socialButton, { backgroundColor: "#2BC652" }]}
+            style={[
+              styles.socialButton,
+              isSmallScreen && { padding: 10 },
+              { backgroundColor: "#2BC652" },
+            ]}
             onPress={openEmail}
           >
-            <Ionicons name="mail-outline" size={24} color="#FFFFFF" />
-            <Text style={[styles.socialText, { color: "#FFFFFF" }]}>Email</Text>
+            <Ionicons
+              name="mail-outline"
+              size={isSmallScreen ? 20 : 24}
+              color="#FFFFFF"
+            />
+            <Text
+              style={[
+                styles.socialText,
+                isSmallScreen && { fontSize: 14 },
+                { color: "#FFFFFF" },
+              ]}
+            >
+              Email
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <Link href="/settings" asChild>
         <TouchableOpacity style={styles.backButtonContainer}>
-          <Ionicons name="arrow-back" size={24} color={currentTheme.text} />
-          <Text style={[styles.backButton, { color: currentTheme.text }]}>
+          <Ionicons
+            name="arrow-back"
+            size={isSmallScreen ? 20 : 24}
+            color={currentTheme.text}
+          />
+          <Text
+            style={[
+              styles.backButton,
+              isSmallScreen && { fontSize: 16 },
+              { color: currentTheme.text },
+            ]}
+          >
             {t.settings}
           </Text>
         </TouchableOpacity>
