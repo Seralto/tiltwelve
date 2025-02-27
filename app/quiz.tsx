@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Dimensions,
 } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";
@@ -24,14 +25,14 @@ export default function QuizScreen() {
     generateQuestion(selectedTable, usedQuestions, setUsedQuestions)
   );
   const [answer, setAnswer] = useState("");
-  const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [feedback, setFeedback] = useState("");
-  const [isProcessingAnswer, setIsProcessingAnswer] = useState(false);
   const { theme } = useTheme();
   const { t } = useLanguage();
   const { addAttempt } = useStatistics();
   const currentTheme = themes[theme];
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
 
   function generateQuestion(
     currentTable: number | null,
@@ -173,11 +174,9 @@ export default function QuizScreen() {
     }
 
     setAnswer("");
-    setIsProcessingAnswer(true);
 
     setTimeout(() => {
       setFeedback("");
-      setIsProcessingAnswer(false);
       generateNewQuestion();
     }, 2000);
   };
@@ -205,12 +204,18 @@ export default function QuizScreen() {
 
   const renderTableSelection = () => {
     return (
-      <View style={styles.tableSelector}>
+      <View
+        style={[
+          styles.tableSelector,
+          isSmallScreen && { marginBottom: 10, paddingHorizontal: 4 },
+        ]}
+      >
         <TouchableOpacity
           style={[
             styles.allTablesButton,
             !selectedTable && { backgroundColor: currentTheme.primary },
             { borderColor: currentTheme.primary },
+            isSmallScreen && { paddingVertical: 4, paddingHorizontal: 12 },
           ]}
           onPress={() => {
             setSelectedTable(null);
@@ -229,6 +234,7 @@ export default function QuizScreen() {
               styles.allTablesText,
               { color: currentTheme.text },
               !selectedTable && { color: currentTheme.background },
+              isSmallScreen && { fontSize: 14 },
             ]}
           >
             {t.allTables}
@@ -243,6 +249,7 @@ export default function QuizScreen() {
                 selectedTable === num && {
                   backgroundColor: currentTheme.primary,
                 },
+                isSmallScreen && { paddingVertical: 2 },
               ]}
               onPress={() => {
                 setSelectedTable(num);
@@ -254,6 +261,7 @@ export default function QuizScreen() {
                   styles.numberText,
                   { color: currentTheme.text },
                   selectedTable === num && { color: currentTheme.background },
+                  isSmallScreen && { fontSize: 14 },
                 ]}
               >
                 {num}
@@ -267,35 +275,58 @@ export default function QuizScreen() {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
+      style={[
+        styles.container,
+        isSmallScreen && { padding: 16 },
+        { backgroundColor: currentTheme.background },
+      ]}
     >
       <View style={styles.header}>
         <View style={styles.headerLeft} />
         <Link href="/" asChild>
           <TouchableOpacity style={styles.homeButton}>
-            <Ionicons name="home-outline" size={24} color={currentTheme.text} />
+            <Ionicons
+              name="home-outline"
+              size={isSmallScreen ? 20 : 24}
+              color={currentTheme.text}
+            />
           </TouchableOpacity>
         </Link>
       </View>
 
       {renderTableSelection()}
 
-      <View style={styles.scoreContainer}>
-        <Text style={[styles.scoreText, { color: currentTheme.secondary }]}>
+      <View
+        style={[styles.scoreContainer, isSmallScreen && { marginBottom: 10 }]}
+      >
+        <Text
+          style={[
+            styles.scoreText,
+            isSmallScreen && { fontSize: 16 },
+            { color: currentTheme.secondary },
+          ]}
+        >
           {selectedTable
             ? t.tableScore.replace("{{table}}", selectedTable.toString())
             : t.globalScore}
-          : <Text style={styles.scoreNumber}>{highScore}</Text>
+          : <Text style={styles.scoreNumber}>{highScore.toLocaleString()}</Text>
         </Text>
       </View>
 
       <View
         style={[
           styles.questionContainer,
+          isSmallScreen && { paddingVertical: 6 },
           { backgroundColor: currentTheme.card },
         ]}
       >
-        <Text style={[styles.questionText, { color: currentTheme.text }]}>
+        <Text
+          style={[
+            styles.questionText,
+            isSmallScreen && { fontSize: 22 },
+            { color: currentTheme.text },
+          ]}
+        >
           {currentQuestion.num1} × {currentQuestion.num2} = ?
         </Text>
       </View>
@@ -304,6 +335,7 @@ export default function QuizScreen() {
         <TextInput
           style={[
             styles.input,
+            isSmallScreen && { fontSize: 16, padding: 12 },
             {
               backgroundColor: currentTheme.card,
               color: currentTheme.text,
@@ -323,13 +355,18 @@ export default function QuizScreen() {
         <TouchableOpacity
           style={[
             styles.submitButton,
+            isSmallScreen && { paddingVertical: 12 },
             { backgroundColor: currentTheme.primary },
             !answer && { opacity: 0.5 },
           ]}
           onPress={handleSubmit}
           disabled={!answer}
         >
-          <Text style={styles.submitButtonText}>{t.submit}</Text>
+          <Text
+            style={[styles.submitButtonText, isSmallScreen && { fontSize: 16 }]}
+          >
+            {t.submit}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -337,6 +374,7 @@ export default function QuizScreen() {
         <Text
           style={[
             styles.feedback,
+            isSmallScreen && { fontSize: 16 },
             feedback.includes("🎉")
               ? styles.correctFeedback
               : styles.incorrectFeedback,
@@ -359,16 +397,26 @@ export default function QuizScreen() {
             { backgroundColor: currentTheme.secondary },
           ]}
         >
-          <View style={styles.toggleButtonContent}>
+          <View
+            style={[
+              styles.toggleButtonContent,
+              isSmallScreen && {
+                marginTop: 0,
+                marginBottom: 12,
+                paddingVertical: 8,
+              },
+            ]}
+          >
             <Ionicons
               name="grid-outline"
-              size={24}
+              size={isSmallScreen ? 16 : 24}
               color={currentTheme.buttonText}
             />
             <Text
               style={[
                 styles.toggleButtonText,
                 { color: currentTheme.buttonText },
+                isSmallScreen && { fontSize: 16 },
               ]}
             >
               {t.switchToMultiple}
@@ -394,6 +442,7 @@ export default function QuizScreen() {
               style={[
                 styles.backButtonText,
                 { color: currentTheme.buttonText },
+                isSmallScreen && { fontSize: 16 },
               ]}
             >
               {t.backToStudy}

@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useTheme, themes } from "./contexts/ThemeContext";
 import { useLanguage } from "./contexts/LanguageContext";
 import { Link } from "expo-router";
@@ -9,7 +15,8 @@ const CompetitionScreen = () => {
   const { theme } = useTheme();
   const currentTheme = themes[theme];
   const { t } = useLanguage();
-
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
   const [player1Score, setPlayer1Score] = useState(0);
   const [player2Score, setPlayer2Score] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState({ num1: 8, num2: 4 });
@@ -100,7 +107,11 @@ const CompetitionScreen = () => {
   if (!gameStarted) {
     return (
       <View
-        style={[styles.container, { backgroundColor: currentTheme.background }]}
+        style={[
+          styles.container,
+          isSmallScreen && { paddingHorizontal: 12, paddingBottom: 12 },
+          { backgroundColor: currentTheme.background },
+        ]}
       >
         <TouchableOpacity
           style={[
@@ -149,7 +160,11 @@ const CompetitionScreen = () => {
     const winner = player1Score > player2Score ? t.player1 : t.player2;
     return (
       <View
-        style={[styles.container, { backgroundColor: currentTheme.background }]}
+        style={[
+          styles.container,
+          isSmallScreen && { paddingHorizontal: 12, paddingBottom: 12 },
+          { backgroundColor: currentTheme.background },
+        ]}
       >
         <View style={styles.finalScoreContainerVertical}>
           <View style={[styles.playerFinalContainer, styles.player1Flipped]}>
@@ -208,7 +223,11 @@ const CompetitionScreen = () => {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
+      style={[
+        styles.container,
+        isSmallScreen && { paddingHorizontal: 12, paddingBottom: 12 },
+        { backgroundColor: currentTheme.background },
+      ]}
     >
       <View style={styles.header}>
         <View style={styles.headerLeft} />
@@ -219,33 +238,30 @@ const CompetitionScreen = () => {
         </Link>
       </View>
 
-      {feedback.message && (
-        <View style={styles.feedbackContainer}>
-          <Text
-            style={[
-              styles.feedbackText,
-              {
-                backgroundColor:
-                  feedback.message === t.correct
-                    ? currentTheme.success
-                    : currentTheme.error,
-                color: currentTheme.text,
-              },
-              currentPlayer === 1 && styles.feedbackTextFlipped,
-            ]}
-          >
-            {feedback.message}
-          </Text>
-        </View>
-      )}
-
-      <View style={styles.boardContainer}>
+      <View
+        style={[
+          styles.boardContainer,
+          { justifyContent: "space-between", alignItems: "center" },
+        ]}
+      >
         {/* Player 1 */}
         <View style={[styles.playerSide, styles.player1Side]}>
-          <Text style={[styles.score, { color: currentTheme.text }]}>
+          <Text
+            style={[
+              styles.score,
+              isSmallScreen && { fontSize: 18 },
+              { color: currentTheme.text },
+            ]}
+          >
             {t.player1}: {player1Score}/{maxQuestions}
           </Text>
-          <Text style={[styles.question, { color: currentTheme.text }]}>
+          <Text
+            style={[
+              styles.question,
+              isSmallScreen && { fontSize: 24 },
+              { color: currentTheme.text },
+            ]}
+          >
             {currentQuestion.num1} × {currentQuestion.num2} = ?
           </Text>
           <View style={styles.optionsContainer}>
@@ -254,6 +270,7 @@ const CompetitionScreen = () => {
                 <TouchableOpacity
                   style={[
                     styles.optionButton,
+                    isSmallScreen && { padding: 10 },
                     {
                       backgroundColor:
                         selectedOption === option && currentPlayer === 1
@@ -267,7 +284,11 @@ const CompetitionScreen = () => {
                   onPress={() => handleAnswer(option, 1)}
                 >
                   <Text
-                    style={[styles.optionText, { color: currentTheme.text }]}
+                    style={[
+                      styles.optionText,
+                      isSmallScreen && { fontSize: 18 },
+                      { color: currentTheme.text },
+                    ]}
                   >
                     {option}
                   </Text>
@@ -277,12 +298,55 @@ const CompetitionScreen = () => {
           </View>
         </View>
 
+        {/* Feedback Message */}
+        {feedback.message && (
+          <View
+            style={[
+              styles.feedbackContainer,
+              {
+                position: "absolute",
+                top: "50%",
+                transform: [{ translateY: "-50%" }],
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.feedbackText,
+                {
+                  backgroundColor:
+                    feedback.message === t.correct
+                      ? currentTheme.success
+                      : currentTheme.error,
+                  color: currentTheme.text,
+                },
+                currentPlayer === 1 && styles.feedbackTextFlipped,
+                isSmallScreen && { fontSize: 16 },
+              ]}
+            >
+              {feedback.message}
+            </Text>
+          </View>
+        )}
+
         {/* Player 2 */}
         <View style={[styles.playerSide, styles.player2Side]}>
-          <Text style={[styles.score, { color: currentTheme.text }]}>
+          <Text
+            style={[
+              styles.score,
+              isSmallScreen && { fontSize: 18 },
+              { color: currentTheme.text },
+            ]}
+          >
             {t.player2}: {player2Score}/{maxQuestions}
           </Text>
-          <Text style={[styles.question, { color: currentTheme.text }]}>
+          <Text
+            style={[
+              styles.question,
+              isSmallScreen && { fontSize: 24 },
+              { color: currentTheme.text },
+            ]}
+          >
             {currentQuestion.num1} × {currentQuestion.num2} = ?
           </Text>
           <View style={styles.optionsContainer}>
@@ -291,6 +355,7 @@ const CompetitionScreen = () => {
                 <TouchableOpacity
                   style={[
                     styles.optionButton,
+                    isSmallScreen && { padding: 10 },
                     {
                       backgroundColor:
                         selectedOption === option && currentPlayer === 2
@@ -304,7 +369,11 @@ const CompetitionScreen = () => {
                   onPress={() => handleAnswer(option, 2)}
                 >
                   <Text
-                    style={[styles.optionText, { color: currentTheme.text }]}
+                    style={[
+                      styles.optionText,
+                      isSmallScreen && { fontSize: 18 },
+                      { color: currentTheme.text },
+                    ]}
                   >
                     {option}
                   </Text>

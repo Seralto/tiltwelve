@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Link } from "expo-router";
 import { useTheme, themes, Theme } from "./contexts/ThemeContext";
 import { useLanguage } from "./contexts/LanguageContext";
@@ -9,6 +9,8 @@ export default function SettingsScreen() {
   const { theme, setTheme } = useTheme();
   const { t, setLanguage, language } = useLanguage();
   const currentTheme = themes[theme];
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
 
   const themeOptions: { value: Theme; label: string; icon: any }[] = [
     { value: "light", label: "Light", icon: "sunny-outline" },
@@ -24,7 +26,7 @@ export default function SettingsScreen() {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
+      style={[styles.container, isSmallScreen && { paddingHorizontal: 16 }, { backgroundColor: currentTheme.background }]}
     >
       <View style={styles.header}>
         <View style={styles.headerLeft} />
@@ -34,19 +36,16 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </Link>
       </View>
-      <Text style={[styles.title, { color: currentTheme.text }]}>
-        {t.settings}
-      </Text>
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>
-          {t.theme}
-        </Text>
+      <Text style={[styles.title, isSmallScreen && { fontSize: 20 }, { color: currentTheme.text }]}>{t.settings}</Text>
+      <View style={[styles.section, isSmallScreen && { marginBottom: 20 }]}>
+        <Text style={[styles.sectionTitle, isSmallScreen && { fontSize: 18 }, { color: currentTheme.text }]}>{t.theme}</Text>
         <View style={styles.themeContainer}>
           {themeOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
               style={[
                 styles.themeOption,
+                isSmallScreen && { padding: 10 },
                 theme === option.value && {
                   backgroundColor: currentTheme.primary,
                   borderColor: currentTheme.primary,
@@ -57,7 +56,7 @@ export default function SettingsScreen() {
             >
               <Ionicons
                 name={option.icon}
-                size={24}
+                size={isSmallScreen ? 20 : 24}
                 color={
                   theme === option.value
                     ? currentTheme.background
@@ -67,6 +66,7 @@ export default function SettingsScreen() {
               <Text
                 style={[
                   styles.themeText,
+                  isSmallScreen && { fontSize: 14 },
                   {
                     color:
                       theme === option.value
@@ -82,16 +82,15 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>
-          {t.language}
-        </Text>
+      <View style={[styles.section, isSmallScreen && { marginBottom: 20 }]}>
+        <Text style={[styles.sectionTitle, isSmallScreen && { fontSize: 18 }, { color: currentTheme.text }]}>{t.language}</Text>
         <View style={styles.languageContainer}>
           {languageOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
               style={[
                 styles.languageOption,
+                isSmallScreen && { padding: 10 },
                 language === option.value && {
                   backgroundColor: currentTheme.primary,
                   borderColor: currentTheme.primary,
@@ -103,6 +102,7 @@ export default function SettingsScreen() {
               <Text
                 style={[
                   styles.languageText,
+                  isSmallScreen && { fontSize: 14 },
                   {
                     color:
                       language === option.value
@@ -122,18 +122,20 @@ export default function SettingsScreen() {
         <TouchableOpacity
           style={[
             styles.aboutButton,
+            isSmallScreen && { padding: 12 },
             { backgroundColor: currentTheme.secondary },
           ]}
         >
           <View style={styles.aboutButtonContent}>
             <Ionicons
               name="information-circle-outline"
-              size={28}
+              size={isSmallScreen ? 20 : 24}
               color={currentTheme.buttonText}
             />
             <Text
               style={[
                 styles.aboutButtonText,
+                isSmallScreen && { fontSize: 16 },
                 { color: currentTheme.buttonText },
               ]}
             >

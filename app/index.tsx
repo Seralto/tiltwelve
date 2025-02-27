@@ -1,4 +1,10 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { Link } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";
 import { useLanguage } from "./contexts/LanguageContext";
@@ -8,6 +14,8 @@ export default function Home() {
   const { theme } = useTheme();
   const { t } = useLanguage();
   const currentTheme = themes[theme];
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
 
   const menuItems = [
     {
@@ -44,18 +52,53 @@ export default function Home() {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
+      style={[
+        styles.container,
+        {
+          padding: isSmallScreen ? 12 : 16,
+          backgroundColor: currentTheme.background,
+        },
+      ]}
     >
-      <Text style={[styles.title, { color: currentTheme.text }]}>
+      <Text
+        style={[
+          styles.title,
+          {
+            fontSize: isSmallScreen ? 28 : 36,
+            marginBottom: isSmallScreen ? 24 : 32,
+            marginTop: isSmallScreen ? 12 : 16,
+            color: currentTheme.text,
+          },
+        ]}
+      >
         TilTwelve
       </Text>
 
-      <View style={styles.menuContainer}>
+      <View style={[styles.menuContainer, { gap: isSmallScreen ? 12 : 16 }]}>
         {menuItems.map((item, index) => (
           <Link key={index} href={item.href} asChild>
             <TouchableOpacity>
-              <View style={styles.cardContent}>
-                <View style={styles.iconContainer}>
+              <View
+                style={[
+                  styles.cardContent,
+                  {
+                    borderRadius: isSmallScreen ? 8 : 10,
+                    padding: isSmallScreen ? 12 : 16,
+                    marginBottom: isSmallScreen ? 6 : 8,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {
+                      width: isSmallScreen ? 40 : 48,
+                      height: isSmallScreen ? 40 : 48,
+                      borderRadius: isSmallScreen ? 20 : 24,
+                      marginRight: isSmallScreen ? 12 : 16,
+                    },
+                  ]}
+                >
                   <Ionicons
                     name={item.icon as any}
                     size={32}
@@ -64,14 +107,24 @@ export default function Home() {
                 </View>
                 <View style={styles.textContainer}>
                   <Text
-                    style={[styles.cardTitle, { color: currentTheme.text }]}
+                    style={[
+                      styles.cardTitle,
+                      {
+                        fontSize: isSmallScreen ? 16 : 18,
+                        marginBottom: isSmallScreen ? 2 : 4,
+                        color: currentTheme.text,
+                      },
+                    ]}
                   >
                     {item.title}
                   </Text>
                   <Text
                     style={[
                       styles.cardDescription,
-                      { color: currentTheme.secondary },
+                      {
+                        fontSize: isSmallScreen ? 14 : 16,
+                        color: currentTheme.secondary,
+                      },
                     ]}
                   >
                     {item.description}
@@ -89,45 +142,29 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   title: {
-    fontSize: 36,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 32,
-    marginTop: 16,
   },
-  menuContainer: {
-    gap: 16,
-  },
+  menuContainer: {},
   cardContent: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 8,
     borderWidth: 1,
     borderColor: "#666",
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 16,
   },
   textContainer: {
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
     fontWeight: "600",
-    marginBottom: 4,
   },
   cardDescription: {
-    fontSize: 16,
     opacity: 0.8,
   },
 });

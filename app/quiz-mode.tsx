@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";
 import { useLanguage } from "./contexts/LanguageContext";
@@ -10,6 +16,8 @@ export default function QuizModeScreen() {
   const { t } = useLanguage();
   const currentTheme = themes[theme];
   const router = useRouter();
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
 
   return (
     <View
@@ -23,44 +31,75 @@ export default function QuizModeScreen() {
           </TouchableOpacity>
         </Link>
       </View>
+
+      {/* Quiz Input Mode */}
       <View style={styles.modesContainer}>
         <TouchableOpacity
-          style={[styles.modeCard, { backgroundColor: currentTheme.card }]}
+          style={[
+            styles.modeCard,
+            isSmallScreen && { paddingTop: 10, paddingBottom: 12 },
+            { backgroundColor: currentTheme.card },
+          ]}
           onPress={() => router.push("/quiz")}
         >
           <View style={styles.modeIconContainer}>
             <Ionicons
               name="keypad-outline"
-              size={48}
+              size={isSmallScreen ? 38 : 48}
               color={currentTheme.buttonText}
             />
           </View>
-          <Text style={[styles.modeTitle, { color: currentTheme.buttonText }]}>
+          <Text
+            style={[
+              styles.modeTitle,
+              isSmallScreen && { fontSize: 18 },
+              { color: currentTheme.buttonText },
+            ]}
+          >
             {t.inputMode}
           </Text>
           <Text
-            style={[styles.modeDescription, { color: currentTheme.buttonText }]}
+            style={[
+              styles.modeDescription,
+              isSmallScreen && { fontSize: 14 },
+              { color: currentTheme.buttonText },
+            ]}
           >
             {t.inputModeDesc}
           </Text>
         </TouchableOpacity>
 
+        {/* Quiz Multiple Choice */}
         <TouchableOpacity
-          style={[styles.modeCard, { backgroundColor: currentTheme.card }]}
+          style={[
+            styles.modeCard,
+            isSmallScreen && { paddingTop: 6, paddingBottom: 12 },
+            { backgroundColor: currentTheme.card },
+          ]}
           onPress={() => router.push("/quiz-multiple")}
         >
           <View style={styles.modeIconContainer}>
             <Ionicons
               name="list-outline"
-              size={48}
+              size={isSmallScreen ? 38 : 48}
               color={currentTheme.buttonText}
             />
           </View>
-          <Text style={[styles.modeTitle, { color: currentTheme.buttonText }]}>
+          <Text
+            style={[
+              styles.modeTitle,
+              isSmallScreen && { fontSize: 18 },
+              { color: currentTheme.buttonText },
+            ]}
+          >
             {t.multipleChoiceMode}
           </Text>
           <Text
-            style={[styles.modeDescription, { color: currentTheme.buttonText }]}
+            style={[
+              styles.modeDescription,
+              isSmallScreen && { fontSize: 14 },
+              { color: currentTheme.buttonText },
+            ]}
           >
             {t.multipleChoiceModeDesc}
           </Text>
@@ -84,6 +123,7 @@ export default function QuizModeScreen() {
               style={[
                 styles.backButtonText,
                 { color: currentTheme.buttonText },
+                isSmallScreen && { fontSize: 16 },
               ]}
             >
               {t.backToStudy}

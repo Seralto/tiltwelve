@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { Link } from "expo-router";
 import { useTheme, themes } from "./contexts/ThemeContext";
@@ -28,6 +29,8 @@ const StudyScreen = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
   const currentTheme = themes[theme];
+  const { width } = Dimensions.get("window");
+  const isSmallScreen = width <= 360;
 
   useEffect(() => {
     loadPreferences();
@@ -90,10 +93,20 @@ const StudyScreen = () => {
     return tableNumbers.map((number) => (
       <View
         key={number}
-        style={[styles.tableRow, { borderBottomColor: currentTheme.border }]}
+        style={[
+          styles.tableRow,
+          { borderBottomColor: currentTheme.border },
+          isSmallScreen && { paddingVertical: 6 },
+        ]}
       >
         <View style={styles.equationContainer}>
-          <Text style={[styles.tableText, { color: currentTheme.text }]}>
+          <Text
+            style={[
+              styles.tableText,
+              { color: currentTheme.text },
+              isSmallScreen && { fontSize: 16 },
+            ]}
+          >
             {selectedNumber} × {number} =
           </Text>
           {hideAnswers ? (
@@ -105,12 +118,24 @@ const StudyScreen = () => {
                 <Ionicons name="eye-off" size={24} color={currentTheme.text} />
               </TouchableOpacity>
             ) : (
-              <Text style={[styles.tableText, { color: currentTheme.text }]}>
+              <Text
+                style={[
+                  styles.tableText,
+                  { color: currentTheme.text },
+                  isSmallScreen && { fontSize: 16 },
+                ]}
+              >
                 {selectedNumber * number}
               </Text>
             )
           ) : (
-            <Text style={[styles.tableText, { color: currentTheme.text }]}>
+            <Text
+              style={[
+                styles.tableText,
+                { color: currentTheme.text },
+                isSmallScreen && { fontSize: 16 },
+              ]}
+            >
               {selectedNumber * number}
             </Text>
           )}
@@ -122,7 +147,11 @@ const StudyScreen = () => {
   if (isLoading) {
     return (
       <View
-        style={[styles.container, { backgroundColor: currentTheme.background }]}
+        style={[
+          styles.container,
+          isSmallScreen && { padding: 16 },
+          { backgroundColor: currentTheme.background },
+        ]}
       >
         <Text style={{ color: currentTheme.text }}>{t.loading}</Text>
       </View>
@@ -131,10 +160,25 @@ const StudyScreen = () => {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: currentTheme.background }]}
+      style={[
+        styles.container,
+        isSmallScreen && { padding: 16 },
+        { backgroundColor: currentTheme.background },
+      ]}
     >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: currentTheme.text }]}>
+      <View
+        style={[
+          styles.header,
+          isSmallScreen && { marginBottom: 16 },
+        ]}
+      >
+        <Text
+          style={[
+            styles.title,
+            isSmallScreen && { fontSize: 18 },
+            { color: currentTheme.text },
+          ]}
+        >
           {t.studyTitle}
         </Text>
         <View style={styles.rightIcons}>
@@ -144,7 +188,7 @@ const StudyScreen = () => {
           >
             <Ionicons
               name={hideAnswers ? "eye-off-outline" : "eye-outline"}
-              size={24}
+              size={isSmallScreen ? 20 : 28}
               color={currentTheme.text}
             />
           </TouchableOpacity>
@@ -152,7 +196,7 @@ const StudyScreen = () => {
             <TouchableOpacity style={styles.iconButton}>
               <Ionicons
                 name="home-outline"
-                size={24}
+                size={isSmallScreen ? 20 : 28}
                 color={currentTheme.text}
               />
             </TouchableOpacity>
@@ -160,13 +204,24 @@ const StudyScreen = () => {
         </View>
       </View>
 
-      <View style={styles.numberSelectorContainer}>
-        <View style={styles.numberRow}>
+      <View
+        style={[
+          styles.numberSelectorContainer,
+          isSmallScreen && { marginBottom: 16 },
+        ]}
+      >
+        <View
+          style={[
+            styles.numberRow,
+            isSmallScreen && { marginBottom: 8 },
+          ]}
+        >
           {firstRowNumbers.map((number) => (
             <TouchableOpacity
               key={number}
               style={[
                 styles.numberButton,
+                isSmallScreen && { width: 35, height: 35, borderRadius: 18 },
                 selectedNumber === number && {
                   backgroundColor: currentTheme.primary,
                 },
@@ -187,6 +242,7 @@ const StudyScreen = () => {
               <Text
                 style={[
                   styles.numberText,
+                  isSmallScreen && { fontSize: 14 },
                   {
                     color:
                       selectedNumber === number ? "#fff" : currentTheme.text,
@@ -199,12 +255,18 @@ const StudyScreen = () => {
           ))}
         </View>
 
-        <View style={styles.numberRow}>
+        <View
+          style={[
+            styles.numberRow,
+            isSmallScreen && { marginBottom: 8 },
+          ]}
+        >
           {secondRowNumbers.map((number) => (
             <TouchableOpacity
               key={number}
               style={[
                 styles.numberButton,
+                isSmallScreen && { width: 35, height: 35, borderRadius: 18 },
                 selectedNumber === number && {
                   backgroundColor: currentTheme.primary,
                 },
@@ -225,6 +287,7 @@ const StudyScreen = () => {
               <Text
                 style={[
                   styles.numberText,
+                  isSmallScreen && { fontSize: 14 },
                   {
                     color:
                       selectedNumber === number ? "#fff" : currentTheme.text,
@@ -239,17 +302,26 @@ const StudyScreen = () => {
       </View>
 
       <ScrollView
-        style={[styles.tableContainer, { backgroundColor: currentTheme.card }]}
+        style={[
+          styles.tableContainer,
+          { backgroundColor: currentTheme.card },
+        ]}
       >
         {renderMultiplicationTable()}
       </ScrollView>
 
       <Link href="/quiz-mode" asChild>
         <TouchableOpacity
-          style={[styles.quizButton, { backgroundColor: currentTheme.primary }]}
+          style={[
+            styles.quizButton,
+            { backgroundColor: currentTheme.primary },
+          ]}
         >
           <Text
-            style={[styles.quizButtonText, { color: currentTheme.buttonText }]}
+            style={[
+              styles.quizButtonText,
+              { color: currentTheme.buttonText },
+            ]}
           >
             {t.takeQuiz}
           </Text>
