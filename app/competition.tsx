@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   optionsButton: {
-    width: 150,
+    width: 180,
     height: 55,
     borderRadius: 10,
     alignItems: "center",

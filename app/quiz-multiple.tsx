@@ -410,7 +410,7 @@ export default function MultipleChoiceQuizScreen() {
             feedback.includes("🎉")
               ? styles.correctFeedback
               : styles.incorrectFeedback,
-            isSmallScreen && { fontSize: 1, marginBottom: 4 },
+            isSmallScreen && { fontSize: 14, marginBottom: 4 },
           ]}
         >
           {feedback}

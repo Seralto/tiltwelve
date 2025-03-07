@@ -115,7 +115,11 @@ const StudyScreen = () => {
                 onPress={() => revealAnswer(number)}
                 style={styles.answerContainer}
               >
-                <Ionicons name="eye-off" size={24} color={currentTheme.text} />
+                <Ionicons
+                  name="eye-off"
+                  size={isSmallScreen ? 20 : 24}
+                  color={currentTheme.text}
+                />
               </TouchableOpacity>
             ) : (
               <Text
@@ -166,12 +170,7 @@ const StudyScreen = () => {
         { backgroundColor: currentTheme.background },
       ]}
     >
-      <View
-        style={[
-          styles.header,
-          isSmallScreen && { marginBottom: 16 },
-        ]}
-      >
+      <View style={[styles.header, isSmallScreen && { marginBottom: 16 }]}>
         <Text
           style={[
             styles.title,
@@ -210,12 +209,7 @@ const StudyScreen = () => {
           isSmallScreen && { marginBottom: 16 },
         ]}
       >
-        <View
-          style={[
-            styles.numberRow,
-            isSmallScreen && { marginBottom: 8 },
-          ]}
-        >
+        <View style={[styles.numberRow, isSmallScreen && { marginBottom: 8 }]}>
           {firstRowNumbers.map((number) => (
             <TouchableOpacity
               key={number}
@@ -255,12 +249,7 @@ const StudyScreen = () => {
           ))}
         </View>
 
-        <View
-          style={[
-            styles.numberRow,
-            isSmallScreen && { marginBottom: 8 },
-          ]}
-        >
+        <View style={[styles.numberRow, isSmallScreen && { marginBottom: 8 }]}>
           {secondRowNumbers.map((number) => (
             <TouchableOpacity
               key={number}
@@ -302,26 +291,17 @@ const StudyScreen = () => {
       </View>
 
       <ScrollView
-        style={[
-          styles.tableContainer,
-          { backgroundColor: currentTheme.card },
-        ]}
+        style={[styles.tableContainer, { backgroundColor: currentTheme.card }]}
       >
         {renderMultiplicationTable()}
       </ScrollView>
 
       <Link href="/quiz-mode" asChild>
         <TouchableOpacity
-          style={[
-            styles.quizButton,
-            { backgroundColor: currentTheme.primary },
-          ]}
+          style={[styles.quizButton, { backgroundColor: currentTheme.primary }]}
         >
           <Text
-            style={[
-              styles.quizButtonText,
-              { color: currentTheme.buttonText },
-            ]}
+            style={[styles.quizButtonText, { color: currentTheme.buttonText }]}
           >
             {t.takeQuiz}
           </Text>
